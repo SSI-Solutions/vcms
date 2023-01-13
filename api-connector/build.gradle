@@ -1,0 +1,75 @@
+plugins {
+    id 'java'
+	alias libs.plugins.spring.boot
+	alias(libs.plugins.bmuschko.docker)
+	alias(libs.plugins.jpa.schema.gen)
+}
+
+dependencies {
+	implementation(project(':commons'))
+	implementation libs.spring.boot.actuator
+	implementation libs.spring.boot.validation
+	implementation libs.spring.boot.web
+	implementation libs.modelmapper
+	implementation libs.spring.security
+	implementation libs.swagger.ui
+	implementation libs.flyway
+	implementation libs.spring.boot.jpa
+	implementation libs.spring.boot.amqp
+
+	annotationProcessor libs.lombok
+
+	runtimeOnly libs.postgres
+
+	compileOnly libs.openapi.jackson.nullable
+	compileOnly libs.spotbugs
+	compileOnly libs.springfox
+	compileOnly libs.swagger.annotations
+
+	testImplementation libs.spring.boot.test
+	testImplementation libs.okhttp.mockserver
+	testImplementation libs.testcontainers.postgres
+	testImplementation libs.testcontainers.jupiter
+}
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+task printImageFullName {
+	doLast {
+		println "${apiConnectorImageFullname}"
+		new File(buildDir, "connectorImageTag").text = "${apiConnectorImageFullname}"
+	}
+}
+
+bootBuildImage {
+	imageName = apiConnectorImageFullname
+	tags = ["${apiConnectorImageName}:latest"]
+}
+
+pushBuildImage {
+	images.add(apiConnectorImageFullname)
+}
+
+// db
+
+tasks.generateSchema.doLast {
+	copy {
+		from 'build/generated/source/schema/main/com/adnovum/vcms/connector/datamodel/ddl/current/'
+		into 'src/main/resources/com/adnovum/vcms/connector/datamodel/ddl/current'
+		include '*.sql'
+		rename('v(\\d+\\.)+(.*)', '$2')
+		duplicatesStrategy = DuplicatesStrategy.INCLUDE
+	}
+}
+
+compileTestJava.dependsOn generateSchema
+bootJarMainClassName.dependsOn generateSchema
+
+jpaSchemaGen {
+	persistenceUnitName = "CONNECTOR-UNIT"
+	packageName = "com.adnovum.vcms.connector.datamodel.ddl"
+}

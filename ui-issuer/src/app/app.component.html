@@ -1,0 +1,29 @@
+<div class="app-content">
+  <header>
+    <nav class="navbar navbar-expand-md navbar-light" aria-label="header">
+      <div>
+        <a class="navbar-brand" href="#">
+          <img src="assets/img/header-footer/adn-full-logo-negative.svg" alt="Adnovum header Logo">
+        </a>
+      </div>
+      <div class="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
+		<img *ngIf="isAdmin" class="admin-img" src="assets/img/cog.png" alt="admin" routerLink="admin">
+      </div>
+    </nav>
+  </header>
+
+  <main class="main">
+    <router-outlet></router-outlet>
+  </main>
+
+  <footer class="footer">
+    <nav class="navbar navbar-expand-md navbar-light" aria-label="footer">
+      <div>
+        <a class="justify-content-start" href="https://adnovum.ch" target="_blank">
+          <img src="assets/img/header-footer/adn-footer-A-only.svg" alt="Adnovum footer Logo">
+          <span style="margin-left: 1rem" class="text-white">{{'footer.powered-by' | translate}}</span>
+        </a>
+      </div>
+    </nav>
+  </footer>
+</div>

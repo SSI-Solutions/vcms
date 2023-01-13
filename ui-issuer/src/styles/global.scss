@@ -1,0 +1,45 @@
+@import "src/styles/colors.scss";
+
+.title {
+	margin-bottom: 4rem;
+}
+
+.content {
+	margin: 2rem 8rem;
+}
+
+.div-content {
+	margin-bottom: 5rem;
+}
+
+table {
+	width: 100%;
+}
+
+th {
+	background-color: $color-bg-gray;
+	border-color: $color-border-gray;
+}
+
+button {
+	float: right;
+}
+
+.btn {
+	color: white;
+	border: none;
+	padding: 5px 25px 5px 25px;
+	text-decoration: none;
+
+	&:hover {
+		color: white;
+	}
+}
+
+.blue-btn {
+	background-color: $color-adn-blue;
+}
+
+.gray-btn {
+	background-color: $color-btn-gray;
+}

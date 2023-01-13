@@ -1,0 +1,11 @@
+.revoke {
+	background-color: red;
+
+	&:disabled {
+		background-color: gray;
+	}
+}
+
+.mat-cell {
+	padding-right: 1rem;
+}

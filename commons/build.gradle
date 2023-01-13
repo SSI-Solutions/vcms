@@ -1,0 +1,195 @@
+import org.openapitools.generator.gradle.plugin.tasks.GenerateTask
+
+plugins {
+	id "java"
+	alias(libs.plugins.openapi.generator)
+}
+
+dependencies {
+	compileOnly libs.spring.boot.web
+	compileOnly libs.spring.boot.jpa
+	compileOnly libs.spring.boot.validation
+	compileOnly libs.openapi.jackson.nullable
+	compileOnly libs.spotbugs
+	compileOnly libs.springfox
+	// For ACA-PY API
+	compileOnly libs.swagger.annotations
+	// For VCMS API
+	compileOnly libs.swagger.annotations.openapi
+	compileOnly libs.spring.security
+
+	compileOnly libs.testcontainers
+	compileOnly libs.testcontainers.postgres
+	compileOnly libs.testcontainers.jupiter
+	compileOnly libs.spring.boot.test
+
+	testImplementation libs.commons.lang3
+	testImplementation libs.spring.boot.web
+
+	annotationProcessor libs.lombok
+}
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+sourceSets {
+	main {
+		java {
+			srcDirs += ["../commons/build/generated/openapi"]
+		}
+	}
+}
+
+tasks.named("compileJava").configure {
+	dependsOn tasks.withType(GenerateTask)
+}
+// We are not using the default generation task, the generators are customized in their own task.
+tasks.named("openApiGenerate").configure {
+	enabled = false
+}
+
+tasks.withType(GenerateTask).configureEach {
+	generateModelTests = false
+	generateModelDocumentation = false
+	generateApiTests = false
+	generateApiDocumentation = false
+}
+
+task buildWebhookServer(type: GenerateTask) {
+	generatorName = "spring"
+	def inputPath = "${projectDir}/contract/svc-webhook.yaml".toString()
+	def outputPath = "${project.buildDir}/generated/openapi/webhook-server".toString()
+	inputSpec = inputPath
+	outputDir = outputPath
+	library = "spring-boot"
+	additionalProperties = [
+			"modelPackage" : "com.adnovum.vcms.genapi.webhook.server.dto",
+			"apiPackage"   : "com.adnovum.vcms.genapi.webhook.server.controller",
+			"dateLibrary"  : "java8",
+			"interfaceOnly": "true"
+	]
+}
+
+task buildVerifierServer(type: GenerateTask) {
+	generatorName = "spring"
+	def inputPath = "${projectDir}/contract/api-verifier.yaml".toString()
+	def outputPath = "${project.buildDir}/generated/openapi/verifier-server".toString()
+	inputSpec = inputPath
+	outputDir = outputPath
+	library = "spring-boot"
+	additionalProperties = [
+			"modelPackage" : "com.adnovum.vcms.genapi.verifier.server.dto",
+			"apiPackage"   : "com.adnovum.vcms.genapi.verifier.server.controller",
+			"dateLibrary"  : "java8",
+			"interfaceOnly": "true"
+	]
+}
+
+task buildIssuerServer(type: GenerateTask) {
+	generatorName = "spring"
+	def inputPath = "${projectDir}/contract/api-issuer.yaml".toString()
+	def outputPath = "${project.buildDir}/generated/openapi/issuer-server".toString()
+	inputSpec = inputPath
+	outputDir = outputPath
+	library = "spring-boot"
+	additionalProperties = [
+			"modelPackage" : "com.adnovum.vcms.genapi.issuer.server.dto",
+			"apiPackage"   : "com.adnovum.vcms.genapi.issuer.server.controller",
+			"dateLibrary"  : "java8",
+			"interfaceOnly": "true"
+	]
+}
+
+task buildConnectorServer(type: GenerateTask) {
+	generatorName = "spring"
+	def inputPath = "${projectDir}/contract/api-connector.yaml".toString()
+	def outputPath = "${project.buildDir}/generated/openapi/connector-server".toString()
+	inputSpec = inputPath
+	outputDir = outputPath
+	library = "spring-boot"
+	additionalProperties = [
+			"modelPackage" : "com.adnovum.vcms.genapi.connector.server.dto",
+			"apiPackage"   : "com.adnovum.vcms.genapi.connector.server.controller",
+			"dateLibrary"  : "java8",
+			"interfaceOnly": "true"
+	]
+}
+
+task buildAriesFacadeServer(type: GenerateTask) {
+	generatorName = "spring"
+	def inputPath = "${projectDir}/contract/svc-aries-facade.yaml".toString()
+	def outputPath = "${project.buildDir}/generated/openapi/aries-facade-server".toString()
+	inputSpec = inputPath
+	outputDir = outputPath
+	library = "spring-boot"
+	additionalProperties = [
+			"modelPackage" : "com.adnovum.vcms.genapi.aries.facade.server.dto",
+			"apiPackage"   : "com.adnovum.vcms.genapi.aries.facade.server.controller",
+			"dateLibrary"  : "java8",
+			"interfaceOnly": "true"
+	]
+}
+
+// Java clients
+
+task buildAriesFacadeJavaClient(type: GenerateTask) {
+	generatorName = "java"
+	def inputPath = "${projectDir}/contract/svc-aries-facade.yaml".toString()
+	def outputPath = "${project.buildDir}/generated/openapi/aries-facade-java-client".toString()
+	inputSpec = inputPath
+	outputDir = outputPath
+	library = "resttemplate"
+	validateSpec = false
+	additionalProperties = [
+			"openApiNullable": false,
+			"dateLibrary"    : "java8",
+			"modelPackage"   : "com.adnovum.vcms.genapi.aries.facade.client.dto",
+			"apiPackage"     : "com.adnovum.vcms.genapi.aries.facade.client.controller",
+			"authPackage"    : "com.adnovum.vcms.genapi.aries.facade.client.auth"
+	]
+}
+
+task buildAcaPyJavaClient(type: GenerateTask) {
+	generatorName = "java"
+	def inputPath = "${projectDir}/contract/svc-aca-py.json".toString()
+	def outputPath = "${project.buildDir}/generated/openapi/aca-py-java-client".toString()
+	inputSpec = inputPath
+	outputDir = outputPath
+	library = "resttemplate"
+	validateSpec = false
+	additionalProperties = [
+			"openApiNullable": true,
+			"dateLibrary"    : "java8",
+			"modelPackage"   : "com.adnovum.vcms.genapi.acapy.client.dto",
+			"apiPackage"     : "com.adnovum.vcms.genapi.acapy.client.controller",
+			"authPackage"    : "com.adnovum.vcms.genapi.acapy.client.auth"
+	]
+}
+
+
+task buildIssuerUiClient(type: GenerateTask) {
+	generatorName = "typescript-angular"
+	def inputPath = "${projectDir}/contract/api-issuer.yaml".toString()
+	def outputPath = "${project.buildDir}/generated/openapi/issuer-ui-client".toString()
+	inputSpec = inputPath
+	outputDir = outputPath
+}
+
+task buildVerifierClient(type: GenerateTask) {
+	generatorName = "typescript-angular"
+	def inputPath = "${projectDir}/contract/api-verifier.yaml".toString()
+	def outputPath = "${project.buildDir}/generated/openapi/verifier-ui-client".toString()
+	inputSpec = inputPath
+	outputDir = outputPath
+}
+
+task buildConnectorUiClient(type: GenerateTask) {
+	generatorName = "typescript-angular"
+	def inputPath = "${projectDir}/contract/api-connector.yaml".toString()
+	def outputPath = "${project.buildDir}/generated/openapi/connector-ui-client".toString()
+	inputSpec = inputPath
+	outputDir = outputPath
+}

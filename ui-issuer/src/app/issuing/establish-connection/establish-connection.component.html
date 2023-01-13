@@ -1,0 +1,13 @@
+<div class="content">
+	<h1>{{'establish-connection.title' | translate}}</h1>
+	<h2>{{'establish-connection.instructions' | translate}}</h2>
+	<div class="qrCode-div" *ngIf="!displayError; else error">
+		<qrcode [qrdata]="qrCode" [errorCorrectionLevel]="'M'" [width]="450" [margin]="0" [allowEmptyString]="true"></qrcode>
+	</div>
+	<ng-template #error>
+		<div class="qrCode-div">
+			<p>{{'establish-connection.error-message' | translate}}</p>
+			<p>{{errorMessage}}</p>
+		</div>
+	</ng-template>
+</div>

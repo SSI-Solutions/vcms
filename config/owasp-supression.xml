@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
+	<suppress>
+		<notes><![CDATA[this CVE is just a warning about avoiding to expose HTTP Invoker endpoints to untrusted clients]]></notes>
+		<packageUrl regex="true">^pkg:maven/org\.springframework/spring\-web@.*$</packageUrl>
+		<cve>CVE-2016-1000027</cve>
+	</suppress>
+	<suppress until="2022-12-10Z">
+		<notes><![CDATA[
+		This suppresses false positives identified on docker-java-shaded.
+		]]></notes>
+		<packageUrl regex="true">^pkg:maven/com\.fasterxml\.jackson\.core/jackson-annotations@2\.6\.0$</packageUrl>
+		<vulnerabilityName regex="true">.*</vulnerabilityName>
+	</suppress>
+	<suppress>
+		<notes><![CDATA[
+	    This is a false positive. we are using a fixed version as a transitive dependency. The library itself is deprecated.
+	    file name: spring-security-oauth2-authorization-server-0.3.1.jar
+	    ]]></notes>
+		<packageUrl regex="true">^pkg:maven/org\.springframework\.security/spring\-security\-oauth2\-authorization\-server@.*$</packageUrl>
+		<cve>CVE-2018-15758</cve>
+	</suppress>
+		<suppress>
+		<notes><![CDATA[
+		This is a false positive. we are using a fixed version as a transitive dependency.
+	    file name: spring-security-oauth2-authorization-server-0.3.1.jar
+	    ]]></notes>
+		<packageUrl regex="true">^pkg:maven/org\.springframework\.security/spring\-security\-oauth2\-authorization\-server@.*$</packageUrl>
+		<cve>CVE-2018-1260</cve>
+	</suppress>
+	<suppress>
+	<notes><![CDATA[
+   file name: spring-security-oauth2-authorization-server-0.3.1.jar
+   ]]></notes>
+	<packageUrl regex="true">^pkg:maven/org\.springframework\.security/spring\-security\-oauth2\-authorization\-server@.*$</packageUrl>
+	<cve>CVE-2022-22978</cve>
+	</suppress>
+	<suppress>
+		<notes><![CDATA[
+		False positive, we are using an up-to-date spring-security dependency, this does not affect us anymore.
+	    file name: spring-security-oauth2-authorization-server-0.3.1.jar
+	    ]]></notes>
+		<packageUrl regex="true">^pkg:maven/org\.springframework\.security/spring\-security\-oauth2\-authorization\-server@.*$</packageUrl>
+		<cve>CVE-2021-22112</cve>
+	</suppress>
+	<suppress until="2022-12-10Z">
+		<notes><![CDATA[
+		This suppresses false positives identified on docker-java-shaded.
+		]]></notes>
+		<packageUrl regex="true">^pkg:maven/com\.fasterxml\.jackson\.core/jackson-core@2\.6\.7$</packageUrl>
+		<vulnerabilityName regex="true">.*</vulnerabilityName>
+	</suppress>
+	<suppress until="2022-12-10Z">
+		<notes><![CDATA[
+		This suppresses false positives identified on docker-java-shaded.
+		]]></notes>
+		<packageUrl regex="true">^pkg:maven/com\.fasterxml\.jackson\.core/jackson-databind@2\.6\.7$</packageUrl>
+		<vulnerabilityName regex="true">.*</vulnerabilityName>
+	</suppress>
+	<suppress until="2022-12-10Z">
+		<notes><![CDATA[
+		This suppresses false positives identified on Spring Security 5.3.4.RELEASE.
+		]]></notes>
+		<packageUrl regex="true">^pkg:maven/org\.springframework\.security/.*@5\.3\.4\.RELEASE$</packageUrl>
+		<vulnerabilityName regex="true">.*</vulnerabilityName>
+	</suppress>
+	<suppress until="2022-12-10Z">
+		<notes><![CDATA[
+		This suppresses false positives identified on Netty before 4.1.2.Final.
+		]]></notes>
+		<packageUrl regex="true">^pkg:maven/io\.netty/.*@4\.1\.27\.Final$</packageUrl>
+		<vulnerabilityName regex="true">.*</vulnerabilityName>
+	</suppress>
+	<suppress until="2022-12-10Z">
+		<notes><![CDATA[
+		This suppresses false positives identified on Log4J before 1.2.17.
+		]]></notes>
+		<packageUrl regex="true">^pkg:maven/log4j/log4j@1\.2\.17$</packageUrl>
+		<vulnerabilityName>CVE-2019-17571</vulnerabilityName>
+		<vulnerabilityName>CVE-2020-9488</vulnerabilityName>
+	</suppress>
+	<suppress until="2022-12-10Z">
+		<notes><![CDATA[
+		This suppresses false positives identified on Apache Commons Compress. Part of docker java shaded.
+		]]></notes>
+		<packageUrl regex="true">^pkg:maven/org\.apache\.commons/commons\-compress@1\.17$</packageUrl>
+		<vulnerabilityName>CVE-2019-12402</vulnerabilityName>
+	</suppress>
+	<suppress until="2022-12-10Z">
+		<packageUrl regex="true">^pkg:npm/ua\-parser\-js@0\.7\.22$</packageUrl>
+		<vulnerabilityName>CVE-2021-27292</vulnerabilityName>
+		<vulnerabilityName>CVE-2020-7793</vulnerabilityName>
+	</suppress>
+	<suppress until="2022-12-10Z">
+		<packageUrl regex="true">^pkg:npm/socket\.io\-parser@3\.3\.2$</packageUrl>
+		<vulnerabilityName>CVE-2020-36049</vulnerabilityName>
+	</suppress>
+	<suppress until="2022-12-10Z">
+		<packageUrl regex="true">^pkg:npm/postcss@7\.0\.21$</packageUrl>
+		<vulnerabilityName>CVE-2021-23368</vulnerabilityName>
+	</suppress>
+	<suppress until="2022-12-10Z">
+		<packageUrl regex="true">^pkg:npm/engine\.io@3\.5\.0$</packageUrl>
+		<vulnerabilityName>CVE-2020-36048</vulnerabilityName>
+	</suppress>
+	<suppress until="2022-12-10Z">
+		<packageUrl regex="true">^pkg:npm/lodash@4\.17\.20$</packageUrl>
+		<vulnerabilityName>CVE-2021-23337</vulnerabilityName>
+	</suppress>
+	<suppress until="2022-12-10Z">
+		<packageUrl regex="true">^pkg:maven/org\.hibernate/hibernate\-core@5\.4\.21\.Final$</packageUrl>
+		<vulnerabilityName>CVE-2020-25638</vulnerabilityName>
+	</suppress>
+	<suppress until="2022-12-10Z">
+		<packageUrl regex="true">^pkg:maven/org\.apache\.tomcat\.embed/.*@9\.0\.38$</packageUrl>
+		<vulnerabilityName regex="true">.*</vulnerabilityName>
+	</suppress>
+</suppressions>

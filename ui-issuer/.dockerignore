@@ -1,0 +1,10 @@
+.git
+.gradle
+.angular
+.editorconfig
+dist
+build/.docker
+build/libs
+build/tmp
+node_modules
+.gitignore

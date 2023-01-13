@@ -1,0 +1,9 @@
+ssi.configuration.creDefIds:
+      - 'Q33Xhs9oRDCtaeozeu2yY1:3:CL:6356:SwissID'
+      - '2kD8qtUkCQNMrenrR1n1dv:3:CL:55093:ePersoVcmsTest'
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/?currentSchema=verifier
+  flyway:
+    url: jdbc:postgresql://localhost:5432/

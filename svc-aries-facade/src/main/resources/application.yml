@@ -1,0 +1,14 @@
+server:
+  port: ${SERVER_PORT:8000}
+
+logging:
+  level:
+    root: ${LOG_LEVEL:INFO}
+
+acapy:
+  basePath: ${ACAPY_BASEPATH:http://127.0.0.1:9020}
+  comment: "present proof request"
+  proofName: "present proof request"
+  nonce: "123456789"
+
+management.server.port: 9000

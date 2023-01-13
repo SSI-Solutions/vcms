@@ -1,0 +1,55 @@
+plugins {
+	id "java"
+	alias(libs.plugins.bmuschko.docker)
+	alias(libs.plugins.spring.boot)
+}
+
+dependencies {
+	implementation project(':commons')
+	implementation libs.spring.boot.actuator
+	implementation libs.spring.boot.validation
+	implementation libs.spring.boot.web
+	implementation libs.spring.security
+	implementation libs.modelmapper
+	implementation libs.commons.lang3
+	implementation libs.swagger.ui
+	implementation libs.openapi.jackson.nullable
+
+	annotationProcessor libs.lombok
+
+	compileOnly libs.openapi.jackson.nullable
+	compileOnly libs.spotbugs
+	compileOnly libs.springfox
+	compileOnly libs.swagger.annotations
+
+	developmentOnly libs.spring.boot.devtools
+
+	testImplementation libs.okhttp
+	testImplementation libs.okhttp.mockserver
+	testImplementation libs.spring.boot.test
+	testImplementation libs.openapi.jackson.nullable
+	testImplementation libs.modelmapper
+	testImplementation libs.spring.boot.web
+}
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+bootBuildImage {
+	imageName = svcAriesFacadeImageFullName
+	tags = ["${svcAriesFacadeImageName}:latest"]
+}
+
+pushBuildImage {
+	images.add(svcAriesFacadeImageFullName)
+}
+
+task printImageFullName {
+	doLast {
+		println "${svcAriesFacadeImageFullName}"
+		new File(buildDir, "AriesFacadeImageTag").text = "${svcAriesFacadeImageFullName}"
+	}
+}

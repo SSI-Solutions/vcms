@@ -1,0 +1,69 @@
+name: Master - Build and deploy VCMS
+
+on:
+  push:
+    branches: [ main ]
+
+env:
+  SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+  REGISTRY_USERNAME: ${{ github.repository_owner }}
+  REGISTRY_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 # for sonar
+
+      - uses: actions/setup-java@v3
+        with:
+          distribution: 'adopt'
+          java-version: '11'
+
+      - uses:  actions/setup-node@v3
+        with:
+          node-version: '16'
+
+      - uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+      - name: Assemble
+        run: ./gradlew assemble --continue
+
+      - name: Check
+        run: ./gradlew check --continue
+
+      - name: Upload test reports
+        if: always()
+        uses: actions/upload-artifact@v1
+        with:
+          name: test-reports
+          path: build/reports/tests
+
+      - name: SonarCloud Scan
+        run: ./gradlew sonarqube
+
+      - name: Build docker images to registry
+        run: ./gradlew buildAllImages
+
+      - name: Push docker images to registry
+        run: ./gradlew pushAllImages
+
+      - name: Get build version
+        id: current_build
+        run: echo "version=$(./gradlew -q currentVersion)" >> $GITHUB_OUTPUT
+
+      - name: Repository Dispatch
+        uses: peter-evans/repository-dispatch@v2
+        with:
+          token: ${{ secrets.DISPATCH_PAT }}
+          repository: ${{ secrets.DISPATCH_REPOSITORY }}
+          event-type: "push-master"
+          client-payload: '{"version": "${{ steps.current_build.outputs.version }}"}'

@@ -1,0 +1,111 @@
+version: '3.3'
+services:
+  rabbitmq:
+    container_name: vcms-svc-rabbitmq
+    image: rabbitmq:3.10.6-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    env_file:
+      - configuration-rabbit-mq.env
+
+  postgres:
+    container_name: vcms-svc-postgres
+    image: postgres:14-alpine
+    ports:
+      - "5432:5432"
+    hostname: vcms-svc-postgres
+    env_file:
+      - configuration-postgres.env
+
+  aries-facade:
+    container_name: vcms-svc-aries-facade
+    image: ghcr.io/ssi-solutions/vcms-svc-aries-facade:1.0.0.20230110T084554Z
+    ports:
+      - "8000:8000"
+    env_file:
+      - configuration-aries-facade.env
+
+  tails-file-server:
+    container_name: vcms-svc-tails
+    image: ghcr.io/ssi-solutions/vcms-svc-tails-server:1.0.0.20230110T084554Z
+    ports:
+      - "6543:6543"
+    hostname: vcms-svc-tails-server
+    env_file:
+      - configuration-tails-server.env
+    volumes:
+      - ./tails-files:/tmp/tails-files
+
+  connector:
+    container_name: vcms-api-connector
+    image: ghcr.io/ssi-solutions/vcms-api-connector:1.0.0.20230110T084554Z
+    ports:
+      - "8080:8080"
+    depends_on:
+      - "aca-py"
+      - "rabbitmq"
+    env_file:
+      - configuration-connector.env
+
+  aca-py:
+    container_name: vcms-svc-aca-py
+    image: ghcr.io/ssi-solutions/vcms-svc-aca-py:1.0.0.20230110T084554Z
+    ports:
+      - "9020:9020"
+      - "8044:8044"
+    env_file:
+      - configuration-aca-py.env
+    depends_on:
+      - tails-file-server
+    volumes:
+      - ./wallet/:/home/indy/.indy_client
+
+  webhook:
+    container_name: vcms-svc-webhook
+    image: ghcr.io/ssi-solutions/vcms-svc-webhook:1.0.0.20230110T084554Z
+    ports:
+      - "5001:5000"
+    env_file:
+      - configuration-webhook.env
+
+  verifierserver:
+    container_name: vcms-api-verifier
+    image: ghcr.io/ssi-solutions/vcms-api-verifier:1.0.0.20230110T084554Z
+    ports:
+      - "8081:8081"
+    hostname: vcms-api-verifier
+    depends_on:
+      - "aca-py"
+      - "rabbitmq"
+    env_file:
+      - configuration-verifier-server.env
+
+  issuerserver:
+    container_name: vcms-api-issuer
+    image: ghcr.io/ssi-solutions/vcms-api-issuer:1.0.0.20230110T084554Z
+    ports:
+      - "8100:8100"
+    hostname: vcms-api-issuer
+    depends_on:
+      - "rabbitmq"
+    env_file:
+      - configuration-issuer-server.env
+
+  issuerclient:
+    container_name: vcms-ui-issuer
+    image: ghcr.io/ssi-solutions/vcms-ui-issuer:1.0.0.20230110T084554Z
+    ports:
+      - "81:80"
+    hostname: vcms-ui-issuer
+    volumes:
+      - ./configuration-issuer-frontend.json:/dist/assets/environment-config.json
+
+  verifierclient:
+    container_name: vcms-ui-verifier
+    image: ghcr.io/ssi-solutions/vcms-ui-verifier:1.0.0.20230110T084554Z
+    ports:
+      - "83:80"
+    hostname: vcms-ui-verifier
+    volumes:
+      - ./configuration-verifier-frontend.json:/dist/assets/environment-config.json

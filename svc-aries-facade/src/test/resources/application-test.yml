@@ -1,0 +1,9 @@
+server:
+  port: ${SERVER_PORT:8000}
+
+logging.level:
+  org.springframework.web.client.RestTemplate: DEBUG
+  org.apache.http.impl.conn.DefaultHttpClientConnectionOperator: DEBUG
+  org.apache.http.headers: DEBUG
+
+acapy.basePath: http://localhost

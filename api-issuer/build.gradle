@@ -1,0 +1,86 @@
+plugins {
+	id "java"
+	alias(libs.plugins.bmuschko.docker)
+	alias(libs.plugins.spring.boot)
+	alias(libs.plugins.jpa.schema.gen)
+}
+
+dependencies {
+	implementation(project(':commons'))
+	implementation libs.flyway
+	implementation libs.spring.boot.actuator
+	implementation libs.spring.boot.amqp
+	implementation libs.spring.boot.jdbc
+	implementation libs.spring.boot.jpa
+	implementation libs.spring.boot.validation
+	implementation libs.spring.boot.web
+	implementation libs.spring.boot.rest
+	implementation libs.spring.security
+	implementation libs.modelmapper
+	implementation libs.commons.lang3
+	implementation libs.swagger.ui
+
+	annotationProcessor libs.lombok
+	annotationProcessor libs.spring.boot.config.processer
+
+	compileOnly libs.openapi.jackson.nullable
+	compileOnly libs.spotbugs
+	compileOnly libs.springfox
+	compileOnly libs.swagger.annotations
+
+	runtimeOnly libs.postgres
+
+	developmentOnly libs.spring.boot.devtools
+
+	testImplementation libs.testcontainers.postgres
+	testImplementation libs.testcontainers.jupiter
+	testImplementation libs.okhttp
+	testImplementation libs.okhttp.mockserver
+	testImplementation libs.spring.boot.test
+	implementation libs.datafaker
+}
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+test {
+	useJUnitPlatform()
+}
+
+tasks.named("generateSchema").configure {
+	doLast {
+		copy {
+			from 'build/generated/source/schema/main/com/adnovum/vcms/issuer/datamodel/ddl/current/'
+			into 'src/main/resources/com/adnovum/vcms/issuer/datamodel/ddl/current'
+			include '*.sql'
+			rename('v(\\d+\\.)+(.*)', '$2')
+			duplicatesStrategy = DuplicatesStrategy.INCLUDE
+		}
+	}
+}
+
+tasks.named("compileTestJava").configure {dependsOn generateSchema}
+tasks.named("bootJarMainClassName").configure {dependsOn generateSchema}
+
+jpaSchemaGen {
+	persistenceUnitName = "ISSUER-UNIT"
+	packageName = "com.adnovum.vcms.issuer.datamodel.ddl"
+}
+
+bootBuildImage {
+	imageName = apiIssuerImageFullName
+	tags = ["${apiIssuerImageName}:latest"]}
+
+pushBuildImage {
+	images.add(apiIssuerImageFullName)
+}
+
+task printImageFullName {
+	doLast {
+		println "${apiIssuerImageFullName}"
+		new File(buildDir, "issuerServerImageTag").text = "${apiIssuerImageFullName}"
+	}
+}

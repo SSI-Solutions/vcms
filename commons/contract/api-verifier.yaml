@@ -1,0 +1,248 @@
+openapi: 3.0.3
+info:
+  title: VCMS Verifier API
+  description: API to request verification and user data.
+  version: '1.0.0'
+servers:
+  - url: 'http://localhost:4000'
+    description: local dev deployment
+paths:
+  /verify/process:
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VerificationRequest'
+      summary: API to verify and receive user data
+      operationId: verifyCredentials
+      responses:
+        '200':
+          description: verify and get user data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VerificationResponse'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+        '501':
+          $ref: '#/components/responses/501'
+  /verify/credentials/definitions:
+    get:
+      summary: Get the list of all available credential definitions
+      operationId: getCredentialDefinitions
+      responses:
+        '200':
+          description: Successful Operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CredentialDefinition'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+        '501':
+          $ref: '#/components/responses/501'
+  /verify/process/{processId}:
+    parameters:
+      - $ref: '#/components/parameters/processId'
+    delete:
+      summary: Delete the verification process and the related claims
+      operationId: deleteVerificationProcess
+      responses:
+        '204':
+          description: Process deleted
+          content:
+            application/json:
+              schema:
+                type: string
+                example: b1bedc3e-7263-411f-9677-fa561c2c16bf
+                format: uuid
+        '200':
+          description: Process does not exist
+          content:
+            application/json:
+              schema:
+                type: string
+                example: b1bedc3e-7263-411f-9677-fa561c2c16bf
+                format: uuid
+  /verify/process/{processId}/state:
+    parameters:
+      - $ref: '#/components/parameters/processId'
+    get:
+      summary: API to request the state of the verification
+      operationId: getVerificationState
+      responses:
+        '200':
+          description: get verification state
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VerStatus'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+        '501':
+          $ref: '#/components/responses/501'
+  /verify/process/{processId}/claims:
+    parameters:
+      - $ref: '#/components/parameters/processId'
+    get:
+      summary: API to request the claims obtained during a verification referenced by its connection id
+      operationId: getVerifiedClaims
+      responses:
+        '200':
+          description: get verification claims
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VerifiedClaims'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+        '501':
+          $ref: '#/components/responses/501'
+components:
+  parameters:
+    processId:
+      in: path
+      name: processId
+      required: true
+      description: id of a verification process
+      schema:
+        $ref: '#/components/schemas/Uuid'
+  responses:
+    '400':
+      description: Client Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ReasonBasedExceptionDto'
+    '401':
+      description: Request unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ReasonBasedExceptionDto'
+    '403':
+      description: Request refused
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ReasonBasedExceptionDto'
+    '404':
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ReasonBasedExceptionDto'
+    '500':
+      description: Server Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ReasonBasedExceptionDto'
+    '501':
+      description: Implementation Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ReasonBasedExceptionDto'
+  schemas:
+    Uuid:
+      type: string
+      format: uuid
+    ReasonBasedExceptionDto:
+      type: object
+      properties:
+        errorCode:
+          type: integer
+          description: The code of the error.
+          format: int32
+        reason:
+          type: string
+          description: The reason for the error.
+        message:
+          type: string
+          description: The message containing why the error was returned by the application.
+      description: Response for a specific error when an operation can not be completed successfully.
+        successfully.
+    VerifiedUserData:
+      description: verified user data
+      type: object
+    VerificationResponse:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          $ref: '#/components/schemas/VerStatus'
+        processId:
+          $ref: '#/components/schemas/Uuid'
+    VerStatus:
+      description: state of the verification
+      type: string
+      enum:
+        - NO_CONNECTION
+        - IN_PROGRESS
+        - VERIFIED
+        - REVOKED
+        - ABANDONED
+    VerifiedClaims:
+      type: object
+      additionalProperties:
+        type: string
+    VerificationRequest:
+      type: object
+      required:
+        - connectionId
+      properties:
+        credentialDefinitionId:
+          type: string
+        attributes:
+          type: array
+          items:
+            type: string
+        connectionId:
+          type: string
+          format: uuid
+    CredentialDefinition:
+      type: object
+      properties:
+        credentialDefinitionId:
+          type: string
+        claims:
+          type: array
+          items:
+            type: string

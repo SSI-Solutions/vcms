@@ -1,0 +1,52 @@
+plugins {
+	id "java"
+	alias(libs.plugins.bmuschko.docker)
+	alias(libs.plugins.spring.boot)
+}
+
+dependencies {
+	implementation project(':commons')
+	implementation libs.spring.boot.amqp
+	implementation libs.spring.boot.actuator
+	implementation libs.spring.boot.validation
+	implementation libs.spring.boot.web
+	implementation libs.spring.security
+
+	compileOnly libs.springfox
+	compileOnly libs.swagger.annotations
+	compileOnly libs.openapi.jackson.nullable
+
+	annotationProcessor libs.lombok
+
+	testImplementation libs.okhttp
+	testImplementation libs.okhttp.mockserver
+	testImplementation libs.spring.boot.test
+}
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+test {
+	useJUnitPlatform()
+}
+
+// docker
+
+bootBuildImage {
+	imageName = svcWebhookImageFullName
+	tags = ["${svcWebhookImageName}:latest"]
+}
+
+pushBuildImage {
+	images.add(svcWebhookImageFullName)
+}
+
+task printImageFullName {
+	doLast {
+		println "${svcWebhookImageFullName}"
+		new File(buildDir, "beImageTag").text = "${svcWebhookImageFullName}"
+	}
+}

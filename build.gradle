@@ -1,0 +1,181 @@
+import com.bmuschko.gradle.docker.tasks.image.DockerBuildImage
+import com.bmuschko.gradle.docker.tasks.image.DockerPushImage
+import org.springframework.boot.gradle.plugin.SpringBootPlugin
+import org.springframework.boot.gradle.tasks.bundling.BootBuildImage
+
+plugins {
+	id 'base'
+	id 'jacoco'
+	alias(libs.plugins.bmuschko.docker) apply false
+	alias(libs.plugins.grgit)
+    alias(libs.plugins.jpa.schema.gen) apply false
+	alias(libs.plugins.openapi.generator) apply false
+	alias(libs.plugins.sonarqube)
+	alias(libs.plugins.spring.boot) apply false
+	alias(libs.plugins.unbrokendom.testsets)
+	alias(libs.plugins.owasp.dependencycheck)
+}
+
+gradle.beforeProject { Project project ->
+	project.with {
+		// html based project analysis => https://docs.gradle.org/current/userguide/project_report_plugin.html
+		apply plugin: 'project-report'
+
+		tasks.withType(JavaCompile) {
+			options.encoding = 'UTF-8'
+		}
+	}
+}
+
+def gitCommitTimestamp = grgit.head().dateTime.withZoneSameInstant(ZoneId.of('GMT')).format("yyyyMMdd'T'HHmmss'Z'")
+version = BUILD_VERSION_PREFIX + "." + gitCommitTimestamp
+
+rootProject.ext.svcAcaPyImageFullName = "${svcAcaPyImageName}:${version}"
+rootProject.ext.svcTailsServerImageFullName = "${svcTailsServerImageName}:${version}"
+rootProject.ext.svcAriesFacadeImageFullName = "${svcAriesFacadeImageName}:${version}"
+rootProject.ext.svcWebhookImageFullName = "${svcWebhookImageName}:${version}"
+rootProject.ext.apiConnectorImageFullname = "${apiConnectorImageName}:${version}"
+rootProject.ext.apiIssuerImageFullName = "${apiIssuerImageName}:${version}"
+rootProject.ext.apiVerifierImageFullName = "${apiVerifierImageName}:${version}"
+rootProject.ext.uiIssuerImageFullName = "${uiIssuerImageName}:${version}"
+rootProject.ext.uiVerifierImageFullName = "${uiVerifierImageName}:${version}"
+
+wrapper {
+	gradleVersion = '7.5.1'
+	distributionType = Wrapper.DistributionType.ALL
+}
+
+allprojects {
+	group = 'com.adnovum.vcms'
+}
+
+['test', 'integrationTest', 'systemTest', 'acceptanceTest'].each { item ->
+	tasks.register("${item}TestReport", TestReport) {
+		destinationDir = file("${buildDir}/reports/tests/${item}")
+	}
+}
+
+subprojects {
+	repositories {
+		mavenCentral()
+		maven {
+			url "https://plugins.gradle.org/m2/"
+		}
+	}
+
+	pluginManager.withPlugin('java') {
+		apply plugin: 'io.spring.dependency-management'
+		dependencyManagement {
+			imports {
+				mavenBom SpringBootPlugin.BOM_COORDINATES
+			}
+		}
+		dependencies {
+			testImplementation 'org.junit.jupiter:junit-jupiter-api'
+			testImplementation 'org.mockito:mockito-junit-jupiter'
+			testImplementation 'org.assertj:assertj-core'
+			testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+		}
+		apply plugin: 'jacoco'
+		apply plugin: 'org.unbroken-dome.test-sets'
+
+		def getLogConfig = tasks.register("getLogConfig", Copy) {
+			from project(':commons').file('configuration/logback.xml')
+			into 'build/resources/main'
+		}
+
+		tasks.named("assemble").configure{
+			finalizedBy getLogConfig
+		}
+
+		tasks.withType(Jar).configureEach { manifest.attributes('Implementation-Vendor': 'AdNovum Informatik AG') }
+		tasks.withType(JavaCompile).configureEach { options.encoding = 'UTF-8' }
+		tasks.withType(JacocoReport).configureEach { reports.xml.enabled true }
+		tasks.withType(Test).configureEach {
+			useJUnitPlatform() // Set JUnit 5 as default testing platform for all Java modules
+			def reportTask = rootProject.tasks.named("${name}TestReport")
+			reportTask.configure { reportOn owner.binaryResultsDirectory.locationOnly }
+			finalizedBy reportTask
+
+			if (name in ['systemTest', 'acceptanceTest']) {
+				outputs.with {
+					cacheIf { false }
+					upToDateWhen { false }
+				}
+			}
+		}
+		tasks.withType(BootBuildImage).configureEach {
+			environment = ['BP_JVM_TYPE'      : 'JRE',
+						   'BP_JVM_VERSION'   : containerJvmVersion,
+						   'JAVA_TOOL_OPTIONS': '-Djava.security.egd=file:/dev/./urandom',
+						   'BP_OCI_SOURCE': githubRepo]
+			publish = false
+			// We need curl for healthchecks and base builder does not include it
+			builder = "paketobuildpacks/builder:full"
+			buildpacks(
+					[
+							"gcr.io/paketo-buildpacks/eclipse-openj9:9.8.0",
+							"urn:cnb:builder:paketo-buildpacks/java" // https://github.com/spring-projects/spring-boot/issues/31233#issuecomment-1145220375
+					]
+			)
+		}
+	}
+	// All modules use bmuschko plugin for pushing the image
+	pluginManager.withPlugin('com.bmuschko.docker-remote-api') {
+		task pushBuildImage(type: DockerPushImage, group: 'docker') {
+			registryCredentials {
+				url = registry_repo
+				username = registry_username
+				password = registry_password
+			}
+		}
+	}
+	pluginManager.withPlugin('node-base') {
+		tasks.withType(KarmaTestTask).configureEach {
+			def prefix = (name == 'npmRunTest') ? 'test' : name
+			def reportTask = rootProject.tasks.named("${prefix}TestReport")
+			reportTask.configure { reportOn owner.binResultsDir }
+			finalizedBy reportTask
+		}
+	}
+	pluginManager.withPlugin('com.github.rmee.jpa-schema-gen') {
+		jpaSchemaGen {
+			continuousMode = true
+			outputDirectory = "${buildDir}/generated/source/schema/main/" as File
+			configuration = 'runtimeClasspath'
+			target = 'FLYWAY'
+			version = BUILD_VERSION_PREFIX
+		}
+	}
+}
+
+sonarqube {
+	properties {
+		property "sonar.projectKey", "vcms"
+		property "sonar.organization", "ssi-solutions"
+		property "sonar.host.url", "https://sonarcloud.io"
+	}
+}
+
+
+task buildAllImages(group: 'dockerAll', description: 'Build docker images for all the existing modules.') {
+	dependsOn subprojects.collect { it.tasks.withType(BootBuildImage) } , subprojects.collect { it.tasks.withType(DockerBuildImage) }
+}
+
+
+task pushAllImages(group: 'dockerAll', description: 'Push all existing images to repository. Will build missing images') {
+	dependsOn subprojects.collect { it.tasks.withType(DockerPushImage) }
+}
+
+check {
+	finalizedBy subprojects.collect { it.tasks.withType(JacocoReport) }
+}
+
+dependencyCheck {
+	suppressionFile = 'config/owasp-supression.xml'
+	failBuildOnCVSS = 8
+}
+
+tasks.register('currentVersion') {
+	println("$version")
+}

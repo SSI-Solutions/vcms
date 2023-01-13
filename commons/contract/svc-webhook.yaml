@@ -1,0 +1,174 @@
+openapi: 3.0.3
+info:
+  title: VCMS Webhook for Acapy
+  description: Webhook definition to listen to Acapy specific events
+  version: '1.0.0'
+servers:
+  - url: 'http://localhost:8000'
+    description: local dev deployment
+tags:
+  - name: Event
+    description: Webhook to listen to event from the cloud wallet
+paths:
+  /topic/connections/:
+    post:
+      tags:
+        - Event
+      summary: WebHook for connection updates
+      operationId: topicConnections
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: 'svc-aca-py.json#/definitions/ConnRecord'
+      responses:
+        '200':
+          description: Successful Operation
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+        '501':
+          $ref: '#/components/responses/501'
+  /topic/basicmessages/:
+    post:
+      tags:
+        - Event
+      summary: WebHook for basic messages
+      operationId: topicBasicMessages
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: 'svc-aca-py.json#/definitions/SendMessage'
+      responses:
+        '200':
+          description: Successful Operation
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+        '501':
+          $ref: '#/components/responses/501'
+  /topic/present_proof/:
+    post:
+      tags:
+        - Event
+      summary: WebHook for present-proof
+      operationId: topicPresentProof
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: 'svc-aca-py.json#/definitions/V10PresentationExchange'
+      responses:
+        '200':
+          description: Successful Operation
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+        '501':
+          $ref: '#/components/responses/501'
+  /topic/issue_credential:
+    post:
+      tags:
+        - Event
+      summary: WebHook for credentials updates
+      operationId: topicIssueCredentials
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: 'svc-aca-py.json#/definitions/V10CredentialExchange'
+      responses:
+        '200':
+          description: Successful Operation
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+        '501':
+          $ref: '#/components/responses/501'
+components:
+  responses:
+    '400':
+      description: Client Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ReasonBasedExceptionDto'
+    '401':
+      description: Request unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ReasonBasedExceptionDto'
+    '403':
+      description: Request refused
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ReasonBasedExceptionDto'
+    '404':
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ReasonBasedExceptionDto'
+    '500':
+      description: Server Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ReasonBasedExceptionDto'
+    '501':
+      description: Implementation Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ReasonBasedExceptionDto'
+  schemas:
+    ReasonBasedExceptionDto:
+      type: object
+      properties:
+        errorCode:
+          type: integer
+          description: The code of the error.
+          format: int32
+        reason:
+          type: string
+          description: The reason for the error.
+        message:
+          type: string
+          description: The message containing why the error was returned by the application.
+      description: Response for a specific error when an operation can not be completed successfully.
+        successfully.

@@ -1,0 +1,11 @@
+<div class="content">
+	<h1>{{'result.title' | translate}}</h1>
+	<h2>{{'result.instructions' | translate}}</h2>
+	<div class="wrapper">
+		<ul class="spacer">
+			<li *ngFor="let claim of verifiedClaims">{{claim.key}}: {{claim.value}}</li>
+		</ul>
+		<img src="assets/img/img-hero-done.png" alt="Process done">
+	</div>
+	<button class="btn blue-btn" routerLink="/">{{'result.back-button' | translate}}</button>
+</div>

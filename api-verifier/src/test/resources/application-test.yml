@@ -1,0 +1,44 @@
+server:
+  port: ${SERVER_PORT:8081}
+
+logging.level:
+  org.springframework.web.client.RestTemplate: DEBUG
+  org.apache.http.impl.conn.DefaultHttpClientConnectionOperator: DEBUG
+  org.apache.http.headers: DEBUG
+
+aries.facade.basePath: http://localhost
+
+spring.security.oauth2.redirect-url: ${CLIENT_REDIRECT_URI:http://127.0.0.1:8080/login/oauth2/code/messaging-client-oidc}
+spring.security.oauth2.client-id: ${CLIENT_ID:messaging-client}
+spring.security.oauth2.client-secret: ${CLIENT_SECRET:{noop}secret}
+spring.security.oauth2.provider-url: ${PROVIDER_URL:http://localhost:9000}
+
+# awesome configuration for rabbit
+# https://cloud.spring.io/spring-cloud-static/spring-cloud-stream-binder-rabbit/2.1.3.RELEASE/multi/multi__configuration_options.html#_rabbitmq_consumer_properties
+spring:
+  rabbitmq:
+    host: ${RABBIT_MQ_HOST:localhost}
+    port: ${RABBIT_MQ_PORT:5672}
+    username: ${RABBITMQ_DEFAULT_USER:guest}
+    password: ${RABBITMQ_DEFAULT_PASS:guest}
+  flyway:
+    baseline-on-migrate: true
+    createSchemas: false
+    schemas: public
+    defaultSchema: public
+    locations: classpath:com/adnovum/vcms/verifier/datamodel/ddl/migration
+    baselineOnMigrate: false
+    validateOnMigrate: true
+    table: schema_version
+    sql-migration-prefix: v
+    encoding: UTF-8
+    user: sa
+    password: sa
+  hibernate:
+    ddl-auto: create
+
+ssi.configuration.creDefIds:
+      - 'Q33Xhs9oRDCtaeozeu2yY1:3:CL:6356:SwissID'
+      - '2kD8qtUkCQNMrenrR1n1dv:3:CL:55093:ePersoVcmsTest'
+
+vcms.rabbitmq.queues.proof: ${RABBIT_MQ_QUEUE_PROOF:verifierPresentationQueue}

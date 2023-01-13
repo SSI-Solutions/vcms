@@ -1,0 +1,27 @@
+server:
+  port: ${SERVER_PORT:5000}
+
+spring:
+  rabbitmq:
+    host: ${RABBIT_MQ_HOST:localhost}
+    port: ${RABBIT_MQ_PORT:5672}
+    username: ${RABBITMQ_DEFAULT_USER:guest}
+    password: ${RABBITMQ_DEFAULT_PASS:guest}
+
+logging:
+  level:
+    root: ${LOG_LEVEL:INFO}
+
+vcms.rabbitmq:
+  connection:
+    exchange-name: ${RABBITMQ_CONNECTION_EXCH:connectionExchange}
+    auth-queue: ${RABBITMQ_CONNECTION_AUTH_Q:authConnectionQueue}
+    connector-queue: ${RABBITMQ_CONNECTION_CONTROLLER_Q:connectorConnectionQueue}
+  presentation:
+    exchange-name: ${RABBITMQ_VERIFICATION_EXCH:presentationExchange}
+    verifier-queue: ${RABBITMQ_VERIFICATION_VERIFIER_Q:verifierPresentationQueue}
+  credential:
+    exchange-name: ${RABBITMQ_CREDENTIAL_EXCH:credentialExchange}
+    issuer-queue: ${RABBITMQ_CREDENTIAL_ISSUER_Q:issuerCredentialQueue}
+
+management.server.port: 9000

@@ -1,0 +1,1 @@
+aries.facade.basePath: ${ARIES_FACADE_BASEPATH:http://localhost:8000}

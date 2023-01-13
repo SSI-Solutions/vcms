@@ -1,0 +1,82 @@
+plugins {
+	id "java"
+	alias(libs.plugins.bmuschko.docker)
+	alias(libs.plugins.spring.boot)
+	alias(libs.plugins.jpa.schema.gen)
+}
+
+dependencies {
+	implementation project(':commons')
+	implementation libs.spring.boot.actuator
+	implementation libs.spring.boot.amqp
+	implementation libs.spring.boot.jdbc
+	implementation libs.spring.boot.jpa
+	implementation libs.spring.boot.rest
+	implementation libs.spring.boot.validation
+	implementation libs.spring.boot.web
+	implementation libs.spring.security
+	implementation libs.modelmapper
+	implementation libs.flyway
+	implementation libs.commons.lang3
+	implementation libs.swagger.ui
+
+	annotationProcessor libs.lombok
+
+	compileOnly libs.openapi.jackson.nullable
+	compileOnly libs.spotbugs
+	compileOnly libs.springfox
+	compileOnly libs.swagger.annotations
+
+	runtimeOnly libs.postgres
+
+	developmentOnly libs.spring.boot.devtools
+
+	testImplementation libs.okhttp
+	testImplementation libs.okhttp.mockserver
+	testImplementation libs.spring.boot.test
+	testImplementation libs.testcontainers.postgres
+	testImplementation libs.testcontainers.jupiter
+	implementation libs.datafaker
+}
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+bootBuildImage {
+	imageName = apiVerifierImageFullName
+	tags = ["${apiVerifierImageName}:latest"]
+}
+
+pushBuildImage {
+	images.add(apiVerifierImageFullName)
+}
+
+task printImageFullName {
+	doLast {
+		println "${apiVerifierImageFullName}"
+		new File(buildDir, "verifierServerImageTag").text = "${apiVerifierImageFullName}"
+	}
+}
+
+// db schema
+
+tasks.generateSchema.doLast {
+	copy {
+		from 'build/generated/source/schema/main/com/adnovum/vcms/verifier/datamodel/ddl/current/'
+		into 'src/main/resources/com/adnovum/vcms/verifier/datamodel/ddl/current'
+		include '*.sql'
+		rename('v(\\d+\\.)+(.*)', '$2')
+		duplicatesStrategy = DuplicatesStrategy.INCLUDE
+	}
+}
+
+tasks.named("compileTestJava").configure {dependsOn generateSchema}
+tasks.named("bootJarMainClassName").configure {dependsOn generateSchema}
+
+jpaSchemaGen {
+	packageName = 'com.adnovum.vcms.verifier.datamodel.ddl'
+	persistenceUnitName = 'VERIFIER-UNIT'
+}

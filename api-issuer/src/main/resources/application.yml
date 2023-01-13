@@ -1,0 +1,66 @@
+server:
+  port: ${SERVER_PORT:8100}
+
+logging:
+  level:
+    root: ${LOG_LEVEL:INFO}
+
+aries.facade.basePath: ${ARIES_FACADE_BASEPATH:http://localhost:8000}
+
+vcms.rabbitmq.queues:
+  credential: ${RABBITMQ_CREDENTIAL_Q:issuerCredentialQueue}
+
+spring:
+  jpa:
+    open-in-view: false
+  rabbitmq:
+    host: ${RABBIT_MQ_HOST:localhost}
+    port: ${RABBIT_MQ_PORT:5672}
+    username: ${RABBITMQ_DEFAULT_USER:guest}
+    password: ${RABBITMQ_DEFAULT_PASS:guest}
+    listener:
+      simple:
+        retry:
+          enabled: true
+          initial-interval: 2s
+          max-attempts: 3
+  datasource:
+    url: jdbc:postgresql://${DATABASE_URL:127.0.0.1:5432}/${DATABASE_NAME:postgres}?currentSchema=${DATABASE_SCHEMA:issuer}${DATABASE_ADDITIONAL_ARGS:}
+    username: ${DATABASE_USER:postgres}
+    password: ${DATABASE_PASS:postgres}
+  flyway:
+    url: jdbc:postgresql://${DATABASE_URL:127.0.0.1:5432}/${DATABASE_NAME:postgres}${FLYWWAY_ADDITIONAL_ARGS:}
+    schemas: ${DATABASE_SCHEMA:issuer}
+    defaultSchema: ${DATABASE_SCHEMA:issuer}
+    createSchemas: true
+    user: ${FLYWAY_USER:postgres}
+    password: ${FLYWAY_PASSWORD:postgres}
+    locations: classpath:com/adnovum/vcms/issuer/datamodel/ddl/migration
+    baselineOnMigrate: false
+    validateOnMigrate: true
+    table: schema_version
+    sql-migration-prefix: v
+    placeholders:
+      username: ${spring.datasource.username}
+    encoding: UTF-8
+
+issuer:
+  schemaId:  ${ISSUER_SCHEMA_ID:please_configure_me}
+  credentialDefinitionId: ${ISSUER_CRED_DEF_ID:please_configure_me}
+  credentialOfferComment: ${ISSUER_CRED_COMMENT:please_configure_me}
+
+springdoc:
+  api-docs:
+    enabled: ${ENABLE_API_DOCS:false}
+  swagger-ui:
+    disable-swagger-default-url: true
+
+vcms:
+  cors:
+    allowCredentials: ${VCMS_CORS_ALLOW_CREDENTIALS:true}
+    allowedOriginPatterns: ${VCMS_CORS_ALLOWED_ORIGIN_PATTERNS:*}
+    allowedHeaders: ${VCMS_CORS_ALLOWED_HEADERS:*}
+    allowedMethods: ${VCMS_CORS_ALLOWED_METHODS:*}
+    mappingPattern: ${VCMS_CORS_MAPPING_PATTERN:/**}
+
+management.server.port: 9000

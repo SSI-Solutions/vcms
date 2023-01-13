@@ -1,0 +1,58 @@
+pluginManagement {
+	repositories {
+		mavenCentral()
+		maven {
+			url "https://plugins.gradle.org/m2/"
+		}
+	}
+}
+def registry_repo = "ghcr.io"
+def registry_repo_owner = 'SSI-Solutions'
+def registry_repo_name = "${registry_repo}/${registry_repo_owner.toLowerCase()}".toString()
+def registry_username = System.getenv('REGISTRY_USERNAME')
+def registry_password = System.getenv('REGISTRY_PASSWORD')
+
+if (registry_username == null || registry_password == null) {
+	logger.info("Not able to use buildpacks to push the image automatically. Need to provide username/password.")
+}
+
+gradle.projectsLoaded {
+	gradle.rootProject.ext.registry_repo = registry_repo
+	gradle.rootProject.ext.registry_username = registry_username
+	gradle.rootProject.ext.registry_password = registry_password
+
+	//docker images
+	gradle.rootProject.ext.githubRepo = "https://github.com/${registry_repo_owner}/vcms".toString()
+	gradle.rootProject.ext.containerJvmVersion = "17.*"
+	gradle.rootProject.ext.svcAcaPyImageName = "${registry_repo_name}/vcms-svc-aca-py"
+	gradle.rootProject.ext.svcTailsServerImageName = "${registry_repo_name}/vcms-svc-tails-server"
+	gradle.rootProject.ext.svcAriesFacadeImageName = "${registry_repo_name}/vcms-svc-aries-facade"
+	gradle.rootProject.ext.svcWebhookImageName = "${registry_repo_name}/vcms-svc-webhook"
+	gradle.rootProject.ext.apiConnectorImageName = "${registry_repo_name}/vcms-api-connector"
+	gradle.rootProject.ext.apiIssuerImageName = "${registry_repo_name}/vcms-api-issuer"
+	gradle.rootProject.ext.apiVerifierImageName = "${registry_repo_name}/vcms-api-verifier"
+	gradle.rootProject.ext.uiIssuerImageName = "${registry_repo_name}/vcms-ui-issuer"
+	gradle.rootProject.ext.uiVerifierImageName = "${registry_repo_name}/vcms-ui-verifier"
+}
+
+buildCache {
+	def isCiBuild = System.env.GO_PIPELINE_COUNTER != null
+
+	local {
+		enabled = !isCiBuild
+		push = true
+	}
+}
+
+rootProject.name = 'vcms'
+
+include 'commons'
+include 'api-issuer'
+include 'api-verifier'
+include 'api-connector'
+include 'svc-aca-py'
+include 'svc-aries-facade'
+include 'svc-webhook'
+include 'svc-tails-server'
+include 'ui-issuer'
+include 'ui-verifier'

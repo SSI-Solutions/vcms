@@ -1,0 +1,59 @@
+name: PR CI
+
+on: pull_request
+
+env:
+  SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+  NODE_SKIP_DOWNLOAD: True
+  NPM_CI: True
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 # for sonar
+
+      - uses: actions/setup-java@v3
+        with:
+          distribution: 'adopt'
+          java-version: '11'
+
+      - uses:  actions/setup-node@v3
+        with:
+          node-version: '16'
+
+      - uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-build-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-build-gradle-
+      - uses: actions/cache@v3
+        with:
+          path: |
+            ~/.npm
+          key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-npm-
+      - name: Build
+        run: ./gradlew assemble --continue --stacktrace
+
+      - name: Check
+        run: ./gradlew check --continue
+
+      - name: Upload test reports
+        if: always()
+        uses: actions/upload-artifact@v1
+        with:
+          name: test-reports
+          path: build/reports/tests
+
+      - name: SonarCloud Scan
+        # Dependabot PRs do not have access to secrets, so this task would fail.
+        # SonarQube results are not meaningful for Dependabot PRs, we can skip this step.
+        if: env.SONAR_TOKEN != null
+        run: ./gradlew sonarqube

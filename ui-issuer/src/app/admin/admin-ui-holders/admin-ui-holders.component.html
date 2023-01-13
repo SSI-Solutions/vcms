@@ -1,0 +1,38 @@
+<div class="content">
+	<h1 class="title">{{'admin.holders.header' | translate}}</h1>
+	<h1>{{'admin.holders.title' | translate}}</h1>
+	<div class="div-content">
+		<div>
+			<input matInput type="text" name="filter" placeholder="Search..."
+				   (keyup)="doFilter($any($event.target).value)"/>
+		</div>
+
+		<table mat-table [dataSource]="holders" matSort>
+			<caption hidden>{{'admin.holders.holders-table.caption' | translate}}</caption>
+			<ng-container matColumnDef="id">
+				<th id="id" mat-header-cell *matHeaderCellDef mat-sort-header>{{'admin.holders.holders-table.holder-id' | translate}}</th>
+				<td mat-cell *matCellDef="let element"> {{element.userId}} </td>
+			</ng-container>
+			<ng-container matColumnDef="openBtn">
+				<th id="openBtn" mat-header-cell *matHeaderCellDef></th>
+				<td mat-cell *matCellDef="let element"><button (click)="openCredentials(element)" class="btn blue-btn">
+					{{'admin.holders.holders-table.open-btn' | translate}}
+				</button></td>
+			</ng-container>
+			<ng-container matColumnDef="deleteBtn">
+				<th id="deleteBtn" mat-header-cell *matHeaderCellDef></th>
+				<td mat-cell *matCellDef="let element"><button (click)="deleteHolder(element.id)" class="btn delete">
+					{{'admin.holders.holders-table.delete-btn' | translate}}
+				</button></td>
+			</ng-container>
+
+			<tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+			<tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+		</table>
+
+		<mat-paginator [pageSizeOptions]="[5, 10, 20, 50, 100]" [pageSize]="10"
+					   showFirstLastButtons
+					   aria-label="Select page of holders">
+		</mat-paginator>
+	</div>
+</div>

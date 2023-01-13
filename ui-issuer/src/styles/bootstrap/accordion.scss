@@ -1,0 +1,11 @@
+mat-expansion-panel-header .mat-expansion-indicator::after {
+	content: "+";
+	border: 0;
+	transform: none;
+	font-size: 30px;
+}
+
+.mat-expansion-panel-header.mat-expanded .mat-expansion-indicator::after {
+	content: "-";
+	font-size: 30px;
+}

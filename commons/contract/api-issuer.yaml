@@ -1,0 +1,346 @@
+openapi: 3.0.3
+info:
+  title: VCMS Issuer API
+  description: API to manage Verifiable Credential Issuing
+  version: '1.0.0'
+servers:
+  - url: 'http://localhost:6000'
+    description: local dev deployment
+tags:
+  - name: Issuing
+    description: Issuing operations.
+  - name: Admin
+    description: Admin operations.
+paths:
+  /issue/process:
+    post:
+      tags:
+        - Issuing
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IssuingRequest'
+      summary: API to issue a Verifiable Credential
+      operationId: issueCredential
+      responses:
+        '200':
+          description: verify and get user data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IssuingResponse'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+        '501':
+          $ref: '#/components/responses/501'
+  /admin/holders:
+    get:
+      tags:
+        - Admin
+      summary: Get all holders
+      operationId: getHolders
+      responses:
+        '200':
+          description: Successful Operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/HolderResponse'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+        '501':
+          $ref: '#/components/responses/501'
+  /admin/holders/{holderId}:
+    parameters:
+      - $ref: '#/components/parameters/holderId'
+    delete:
+      tags:
+        - Admin
+      summary: Delete Holder
+      operationId: deleteHolder
+      responses:
+        '200':
+          description: Successful Operation
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+        '501':
+          $ref: '#/components/responses/501'
+  /admin/holders/{holderId}/credentials:
+    parameters:
+      - $ref: '#/components/parameters/holderId'
+    get:
+      tags:
+        - Admin
+      summary: Get all credentials for a given holder
+      operationId: getCredentialsFromHolder
+      responses:
+        '200':
+          description: Successful Operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CredentialResponse'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+        '501':
+          $ref: '#/components/responses/501'
+  /admin/credentials/{credentialId}/revoke:
+    parameters:
+      - $ref: '#/components/parameters/credentialId'
+    put:
+      tags:
+        - Admin
+      summary: Revoke a certain credential based on the credential exchange ID
+      operationId: revokeCredential
+      responses:
+        '200':
+          description: Successful Operation
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+        '501':
+          $ref: '#/components/responses/501'
+  /issue/credentials/definitions:
+    get:
+      summary: Get the list of all available credential definitions
+      operationId: getCredentialDefinitions
+      responses:
+        '200':
+          description: Successful Operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CredentialDefinition'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+        '501':
+          $ref: '#/components/responses/501'
+  /issue/process/{processId}/state:
+    parameters:
+      - $ref: '#/components/parameters/processId'
+    get:
+      summary: API to request the issuing state
+      operationId: issuingState
+      responses:
+        '200':
+          description: get issuing state
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IssuStatus'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+        '501':
+          $ref: '#/components/responses/501'
+components:
+  parameters:
+    connectionId:
+      in: path
+      name: connectionId
+      required: true
+      description: id of the DIDComm connection between the user and the service
+      schema:
+        $ref: '#/components/schemas/Uuid'
+    processId:
+      in: path
+      name: processId
+      required: true
+      description: id of an issuing process
+      schema:
+        $ref: '#/components/schemas/Uuid'
+    credentialId:
+      in: path
+      name: credentialId
+      required: true
+      description: Issued VC id
+      schema:
+        $ref: '#/components/schemas/Uuid'
+    holderId:
+      in: path
+      name: holderId
+      required: true
+      description: Holder id to identify and correlate connections and credentials
+      schema:
+        $ref: '#/components/schemas/Uuid'
+  responses:
+    '400':
+      description: Client Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ReasonBasedExceptionDto'
+    '401':
+      description: Request unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ReasonBasedExceptionDto'
+    '403':
+      description: Request refused
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ReasonBasedExceptionDto'
+    '404':
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ReasonBasedExceptionDto'
+    '500':
+      description: Server Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ReasonBasedExceptionDto'
+    '501':
+      description: Implementation Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ReasonBasedExceptionDto'
+  schemas:
+    Uuid:
+      type: string
+      format: uuid
+    ReasonBasedExceptionDto:
+      type: object
+      properties:
+        errorCode:
+          type: integer
+          description: The code of the error.
+          format: int32
+        reason:
+          type: string
+          description: The reason for the error.
+        message:
+          type: string
+          description: The message containing why the error was returned by the application.
+      description: Response for a specific error when an operation can not be completed successfully.
+        successfully.
+    HolderResponse:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/Uuid'
+        userId:
+          type: string
+    CredentialResponse:
+      type: object
+      properties:
+        connectionId:
+          type: string
+          format: uuid
+        credentialId:
+          type: string
+        processState:
+          type: string
+        revocationState:
+          type: string
+        issuingDate:
+          type: string
+    IssuStatus:
+      description: state of the issuing process
+      type: string
+      enum:
+        - NO_CONNECTION
+        - IN_PROGRESS
+        - VC_ISSUED
+        - REVOKED
+        - ABANDONED
+    IssuingResponse:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          $ref: '#/components/schemas/IssuStatus'
+        processId:
+          $ref: '#/components/schemas/Uuid'
+    IssuingRequest:
+      type: object
+      properties:
+        connectionId:
+          type: string
+          format: uuid
+        credentialDefinitionId:
+          type: string
+        attributes:
+          $ref: '#/components/schemas/AttributeMap'
+        userId:
+          type: string
+    AttributeMap:
+      type: object
+      additionalProperties:
+        type: string
+    CredentialDefinition:
+      type: object
+      properties:
+        credentialDefinitionId:
+          type: string
+        claims:
+          type: array
+          items:
+            type: string

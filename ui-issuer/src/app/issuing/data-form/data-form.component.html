@@ -1,0 +1,13 @@
+<div class="content">
+	<h1>{{'data-form.title' | translate}}</h1>
+	<form [formGroup]="dataForm" (ngSubmit)="onSubmit()">
+		<mat-form-field class="half-width" appearance="fill" *ngFor="let claim of claims">
+			<mat-label>{{claim}}</mat-label>
+			<input matInput type="{{claim}}" formControlName="{{claim}}">
+			<mat-error *ngIf="dataForm.get(claim)!.hasError('required')">{{claim}} {{'data-form.required-error' | translate}}</mat-error>
+		</mat-form-field>
+		<hr>
+		<button class="btn blue-btn" type="submit">{{'data-form.continue-button' | translate}}</button>
+		<button class="btn gray-btn" routerLink="/">{{'data-form.back-button' | translate}}</button>
+	</form>
+</div>

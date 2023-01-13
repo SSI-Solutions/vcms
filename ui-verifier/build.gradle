@@ -1,0 +1,75 @@
+import com.bmuschko.gradle.docker.tasks.image.DockerBuildImage
+
+plugins {
+	id 'java' // The plugin is necessary for the "implementation" dependency scope
+	alias(libs.plugins.node)
+	alias(libs.plugins.bmuschko.docker)
+}
+
+dependencies {
+	implementation project(":commons")
+}
+
+node {
+	download = false
+	version = "16.15.0"
+	npmVersion = "8.1.2"
+}
+
+task copyCommons(type: Copy) {
+	into "build/generated/"
+
+	into("api-verifier") {
+		from  "../commons/build/generated/openapi/verifier-ui-client"
+	}
+	into("connector-client") {
+		from "../commons/build/generated/openapi/connector-ui-client"
+	}
+}
+
+task npmBuild(type: NpmTask) {
+	dependsOn npmInstall, copyCommons
+	args = ['run', 'build']
+}
+
+copyCommons.dependsOn ':commons:compileJava'
+
+tasks.named('assemble').configure {
+	dependsOn npmInstall
+	dependsOn npmBuild
+}
+
+tasks.register('npmLint', NpmTask) {
+	args = ['run', 'lint']
+}
+
+tasks.register('npmTest', NpmTask) {
+	args = ['run', 'test']
+}
+
+tasks.named('check').configure {
+	// FIXME Karma does not successfully connect to the browser, tests are not running.
+	//	dependsOn npmTest
+	dependsOn assemble
+	dependsOn npmLint
+}
+
+task printImageFullName {
+	doLast {
+		println "${uiVerifierImageFullName}"
+		new File(buildDir, "uiVerifierImageFullName").text = "${uiVerifierImageFullName}"
+	}
+}
+
+task buildImage(type: DockerBuildImage, group: 'docker') {
+	inputDir = file("${project.projectDir}")
+	images.add("${uiVerifierImageFullName}")
+	images.add("${uiVerifierImageName}:latest")
+	labels.put("org.opencontainers.image.source", "${githubRepo}")
+}
+
+buildImage.dependsOn copyCommons
+
+pushBuildImage {
+	images.add(uiVerifierImageFullName)
+}

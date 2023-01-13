@@ -1,0 +1,4 @@
+{
+	"issuerBasePath": "http://localhost:8100",
+	"connectorBasePath": "http://localhost:8080"
+}

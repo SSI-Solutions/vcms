@@ -1,0 +1,7 @@
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    disable-swagger-default-url: true
+
+LOG_LEVEL: INFO

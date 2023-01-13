@@ -1,0 +1,4 @@
+docker/wallet/*
+!docker/wallet/.gitkeep
+docker/tails-files/*
+!docker/tails-files/.gitkeep

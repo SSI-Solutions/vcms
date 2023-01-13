@@ -1,0 +1,4 @@
+{
+	"verifierBasePath": "http://localhost:8081",
+	"connectorBasePath": "http://localhost:8080"
+}

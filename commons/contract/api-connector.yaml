@@ -1,0 +1,148 @@
+openapi: 3.0.3
+info:
+  title: VCMS Connector API
+  description: API to request connection invitation URLs and verify state.
+  version: '1.0.0'
+servers:
+  - url: 'http://localhost:5000'
+    description: local dev deployment
+paths:
+  /connection/invitation:
+    post:
+      summary: API to request a new invitation to a DIDComm connection
+      operationId: connectionInvitation
+      responses:
+        '200':
+          description: get new invitation to a DIDComm connection
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Invitation'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+        '501':
+          $ref: '#/components/responses/501'
+  /connection/{connectionId}:
+    parameters:
+      - $ref: '#/components/parameters/connectionId'
+    get:
+      summary: API to request the state of a connection
+      operationId: connectionState
+      responses:
+        '200':
+          description: get DIDComm connection state
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConnStatus'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+        '501':
+          $ref: '#/components/responses/501'
+components:
+  parameters:
+    connectionId:
+      in: path
+      name: connectionId
+      required: true
+      description: id of the DIDComm connection between the user and the service
+      schema:
+        type: string
+        format: uuid
+  responses:
+    '400':
+      description: Client Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ReasonBasedExceptionDto'
+    '401':
+      description: Request unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ReasonBasedExceptionDto'
+    '403':
+      description: Request refused
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ReasonBasedExceptionDto'
+    '404':
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ReasonBasedExceptionDto'
+    '500':
+      description: Server Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ReasonBasedExceptionDto'
+    '501':
+      description: Implementation Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ReasonBasedExceptionDto'
+  schemas:
+    ReasonBasedExceptionDto:
+      type: object
+      properties:
+        errorCode:
+          type: integer
+          description: The code of the error.
+          format: int32
+        reason:
+          type: string
+          description: The reason for the error.
+        message:
+          type: string
+          description: The message containing why the error was returned by the application.
+      description: Response for a specific error when an operation can not be completed successfully.
+        successfully.
+    Invitation:
+      description: invitation to a DIDComm connection
+      type: object
+      properties:
+        invitationUrl:
+          type: string
+          description: Invitation to convert to a QR Code to be usable by the SSI wallet.
+        connectionId:
+          type: string
+          format: uuid
+          description: Connection Id necessary for authentication status
+    ConnStatus:
+      type: string
+      enum:
+        - init
+        - created
+        - requested
+        - responded
+        - established
+        - abandoned
+      description: >
+        State of the connection:
+          * `init` - Connection invitation to be created.
+          * `created` - Connection invitation is created, waiting for the QR code to be scanned.
+          * `requested` - Mobile wallet accepted the invitation, waiting for cloud agent to respond.
+          * `responded` - Cloud wallet responded with the new connection, waiting for mobile wallet to acknowledge.
+          * `established` - Connection between the wallets is established and active.
+          * `abandoned` - The connection is closed.

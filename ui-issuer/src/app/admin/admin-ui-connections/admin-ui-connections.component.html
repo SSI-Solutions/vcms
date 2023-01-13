@@ -1,0 +1,48 @@
+<div class="content">
+	<h1>{{'admin.credentials.title' | translate}} {{getHolderId()}}</h1>
+	<div class="div-content">
+		<div>
+			<input matInput type="text" name="filter" placeholder="Search..."
+				   (keyup)="doFilter($any($event.target).value)"/>
+		</div>
+
+		<table mat-table [dataSource]="credentials" matSort matSortActive="issuingDate" matSortDirection="desc">
+			<caption hidden>{{'admin.credentials.credentials-table.caption' | translate}}</caption>
+			<ng-container matColumnDef="connectionId">
+				<th id="connectionId" mat-header-cell *matHeaderCellDef mat-sort-header>{{'admin.credentials.credentials-table.connection-id' | translate}}</th>
+				<td mat-cell *matCellDef="let element"> {{element.connectionId}} </td>
+			</ng-container>
+			<ng-container matColumnDef="credentialId">
+				<th id="credentialId" mat-header-cell *matHeaderCellDef mat-sort-header>{{'admin.credentials.credentials-table.credential-id' | translate}}</th>
+				<td mat-cell *matCellDef="let element"> {{element.credentialId}} </td>
+			</ng-container>
+			<ng-container matColumnDef="processState">
+				<th id="processState" mat-header-cell *matHeaderCellDef mat-sort-header>{{'admin.credentials.credentials-table.process-state' | translate}}</th>
+				<td mat-cell *matCellDef="let element"> {{element.processState}} </td>
+			</ng-container>
+			<ng-container matColumnDef="revocationState">
+				<th id="revocationState" mat-header-cell *matHeaderCellDef mat-sort-header>{{'admin.credentials.credentials-table.revocation-state' | translate}}</th>
+				<td mat-cell *matCellDef="let element"> {{element.revocationState}} </td>
+			</ng-container>
+			<ng-container matColumnDef="issuingDate">
+				<th id="issuingDate" mat-header-cell *matHeaderCellDef mat-sort-header>{{'admin.credentials.credentials-table.issuing-date' | translate}}</th>
+				<td mat-cell *matCellDef="let element"> {{element.issuingDate}} </td>
+			</ng-container>
+			<ng-container matColumnDef="revokeBtn">
+				<th id="revokeBtn" mat-header-cell *matHeaderCellDef></th>
+				<td mat-cell *matCellDef="let element"><button (click)="revokeCredential(element.credentialId)" [disabled]="element.revocationState === 'revoked'" class="btn revoke">
+					{{'admin.credentials.credentials-table.revoke-btn' | translate}}
+				</button></td>
+			</ng-container>
+
+			<tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+			<tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+		</table>
+
+		<mat-paginator [pageSizeOptions]="[5, 10, 20, 50, 100]" [pageSize]="10"
+					   showFirstLastButtons
+					   aria-label="Select page of credentials">
+		</mat-paginator>
+	</div>
+	<button class="btn blue-btn" routerLink="/admin">{{'admin.credentials.back-button' | translate}}</button>
+</div>

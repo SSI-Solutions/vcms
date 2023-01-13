@@ -1,0 +1,65 @@
+{
+	"footer": {
+		"powered-by": "powered by Adnovum Informatik AG"
+	},
+	"credential-def-overview": {
+		"header": "Welcome to the issuer UI",
+		"title": "List of available credential definitions",
+		"table": {
+			"caption": "list of credential definitions",
+			"credential-def-id": "Credential definition ID",
+			"claims": "Claims",
+			"select-btn": "Select"
+		}
+	},
+	"data-form": {
+		"title": "Enter required data",
+		"required-error": "is required",
+		"back-button": "Back",
+		"continue-button": "Save and continue"
+	},
+	"establish-connection": {
+		"title": "Establish connection",
+		"instructions": "Scan the QR code with your digital wallet to open a new connection.",
+		"error-message": "Sorry, there was a problem displaying the QR Code..."
+	},
+	"accept-offer": {
+		"title": "Accept offer",
+		"instructions": "Go to your personal digital wallet and accept the offer for the verifiable credential.",
+		"processing": {
+			"title": "Processing state:",
+			"accept-proposal": "Accept the proposal for the verifiable credential.",
+			"credential-issued": "Verifiable credential has been issued."
+		}
+	},
+	"result": {
+		"title": "Success!",
+		"instructions": "You have now successfully obtained a verifiable credential, which is now stored in your personal digital wallet.",
+		"back-button": "Back to overview"
+	},
+	"admin": {
+		"holders": {
+			"header": "Welcome to the admin UI",
+			"title": "List of holders and connections",
+			"holders-table": {
+				"caption": "list of holders",
+				"holder-id": "User ID",
+				"open-btn": "Open",
+				"delete-btn": "Delete"
+			}
+		},
+		"credentials": {
+			"title": "List of credentials for",
+			"credentials-table": {
+				"caption": "list of credentials",
+				"connection-id": "Connection ID",
+				"credential-id": "Credential ID",
+				"process-state": "Process state",
+				"revocation-state": "Revocation state",
+				"issuing-date": "Issuing date",
+				"revoke-btn": "Revoke"
+			},
+			"back-button": "Back"
+		}
+	}
+}

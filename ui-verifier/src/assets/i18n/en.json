@@ -1,0 +1,39 @@
+{
+	"footer": {
+		"powered-by": "powered by Adnovum Informatik AG"
+	},
+	"credential-def-overview": {
+		"header": "Welcome to the verifier UI",
+		"title": "Choose a credential definition to verify",
+		"table": {
+			"caption": "list of credential definitions",
+			"credential-def-id": "Credential definition ID",
+			"claims": "Claims",
+			"select-btn": "Select"
+		}
+	},
+	"credential-def-selection": {
+		"title": "Choose specific claims to verify",
+		"all-cb": "Choose all claims",
+		"back-btn": "Back",
+		"continue-btn": "Save and continue"
+	},
+	"establish-connection": {
+		"title": "Establish connection",
+		"instructions": "Scan the QR code with your digital wallet to open a new connection.",
+		"error-message": "Sorry, there was a problem displaying the QR Code..."
+	},
+	"verify-credential": {
+		"title": "Please wait...",
+		"instructions": "Wait a moment for your verifiable credential to be verified. This won't take long."
+	},
+	"result": {
+		"title": "Success!",
+		"instructions": "Your verifiable credential has successfully been verified:",
+		"back-button": "Back to overview"
+	},
+	"revoked": {
+		"title": "Credential revoked",
+		"status": "Credential verification failed as the presented credential is revoked!"
+	}
+}

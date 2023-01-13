@@ -1,0 +1,5 @@
+{
+	"info": "This file is overwritten by Docker Compose",
+	"issuerBasePath": "http://issuerBasePath:9081",
+	"connectorBasePath": "http://connectorBasePath:9080"
+}

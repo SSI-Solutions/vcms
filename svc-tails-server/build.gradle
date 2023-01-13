@@ -1,0 +1,16 @@
+import com.bmuschko.gradle.docker.tasks.image.DockerBuildImage
+
+plugins {
+	alias(libs.plugins.bmuschko.docker)
+}
+
+task buildImage(type: DockerBuildImage, group: 'docker') {
+	inputDir = file("${project.projectDir}")
+	images.add(svcTailsServerImageFullName)
+	images.add("${svcTailsServerImageName}:latest")
+	labels.put("org.opencontainers.image.source", "${githubRepo}")
+}
+
+pushBuildImage {
+	images.add(svcTailsServerImageFullName)
+}

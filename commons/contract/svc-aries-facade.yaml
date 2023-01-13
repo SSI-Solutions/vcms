@@ -1,0 +1,435 @@
+openapi: 3.0.3
+info:
+  title: VCMS Aries Facade API
+  description: API Facade for the Aca-Py agent
+  version: '1.0.0'
+servers:
+  - url: 'http://localhost:8000'
+    description: local dev deployment
+paths:
+  /connections:
+    post:
+      tags:
+        - Connection
+      summary: API to request a new invitation to a DIDComm connection
+      operationId: connectionInvitation
+      responses:
+        '200':
+          description: get new invitation to a DIDComm connection
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AriesConnectionInvitation'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+        '501':
+          $ref: '#/components/responses/501'
+  /connections/{connectionId}:
+    parameters:
+      - $ref: '#/components/parameters/connectionId'
+    get:
+      tags:
+        - Connection
+      summary: API to request the state of a connection
+      operationId: connectionState
+      responses:
+        '200':
+          description: get DIDComm connection state
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AriesConnectionState'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+        '501':
+          $ref: '#/components/responses/501'
+  /connections/{connectionId}/verify:
+    parameters:
+      - $ref: '#/components/parameters/connectionId'
+    put:
+      tags:
+        - Verification
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VerificationOption'
+      summary: API to verify and receive user data
+      operationId: verifyCredentials
+      responses:
+        '200':
+          description: verification process started
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VerificationResponse'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+        '501':
+          $ref: '#/components/responses/501'
+  /exchanges/{exchangeId}/issue:
+    parameters:
+      - $ref: '#/components/parameters/exchangeId'
+    put:
+      tags:
+        - Issuing
+      summary: API to issue a Verifiable Credential
+      operationId: issueCredential
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IssuingResponse'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+        '501':
+          $ref: '#/components/responses/501'
+  /connections/{connectionId}/offer:
+    parameters:
+      - $ref: '#/components/parameters/connectionId'
+    put:
+      tags:
+        - Issuing
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IssuingOption'
+      summary: API to offer a Verifiable Credential
+      operationId: offerCredential
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IssuingResponse'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+        '501':
+          $ref: '#/components/responses/501'
+  /credentials/{credExchId}/revoke:
+    parameters:
+      - $ref: '#/components/parameters/credExchId'
+    put:
+      tags:
+        - Revocation
+      summary: Revoke a certain credential
+      operationId: revokeCredential
+      responses:
+        '200':
+          description: Successful Operation
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+        '501':
+          $ref: '#/components/responses/501'
+  /credentials/definitions/lookup:
+    post:
+      tags:
+        - Check
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: string
+      summary: Look up to the credential definition ids on the ledger
+      operationId: getCredentialDefinitionsById
+      responses:
+        '200':
+          description: Successful Operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CredentialDefinition'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+        '501':
+          $ref: '#/components/responses/501'
+  /credentials/definitions/created:
+    get:
+      tags:
+        - Check
+      summary: Look up to the created credential definitions from the ledger
+      operationId: getCreatedCredentialDefinitions
+      responses:
+        '200':
+          description: Successful Operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CredentialDefinition'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+        '501':
+          $ref: '#/components/responses/501'
+  /credentials/definitions/{creDefId}/created:
+    parameters:
+      - $ref: '#/components/parameters/creDefId'
+    get:
+      tags:
+        - Check
+      summary: Is the given credential definition created by this wallet?
+      operationId: isCreatedCredentialDefinition
+      responses:
+        '200':
+          description: Successful Operation
+          content:
+            application/json:
+              schema:
+                type: boolean
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+        '501':
+          $ref: '#/components/responses/501'
+components:
+  parameters:
+    connectionId:
+      in: path
+      name: connectionId
+      required: true
+      description: id of the DIDComm connection between the user and the service
+      schema:
+        $ref: '#/components/schemas/Uuid'
+    credentialId:
+      in: path
+      name: credentialId
+      required: true
+      description: Issued VC id
+      schema:
+        $ref: '#/components/schemas/Uuid'
+    credExchId:
+      in: path
+      name: credExchId
+      required: true
+      description: Credential Exchange Id
+      schema:
+        type: string
+    exchangeId:
+      in: path
+      name: exchangeId
+      required: true
+      description: Credential exchange id
+      schema:
+        $ref: '#/components/schemas/Uuid'
+    creDefId:
+      in: path
+      name: creDefId
+      required: true
+      description: Credential definition id
+      schema:
+        type: string
+  responses:
+    '400':
+      description: Client Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ReasonBasedExceptionDto'
+    '401':
+      description: Request unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ReasonBasedExceptionDto'
+    '403':
+      description: Request refused
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ReasonBasedExceptionDto'
+    '404':
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ReasonBasedExceptionDto'
+    '500':
+      description: Server Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ReasonBasedExceptionDto'
+    '501':
+      description: Implementation Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ReasonBasedExceptionDto'
+  schemas:
+    Uuid:
+      type: string
+      format: uuid
+    ReasonBasedExceptionDto:
+      type: object
+      properties:
+        errorCode:
+          type: integer
+          description: The code of the error.
+          format: int32
+        reason:
+          type: string
+          description: The reason for the error.
+        message:
+          type: string
+          description: The message containing why the error was returned by the application.
+      description: Response for a specific error when an operation can not be completed successfully.
+        successfully.
+    AriesConnectionInvitation:
+      description: invitation to a DIDComm connection
+      type: object
+      properties:
+        invitationUrl:
+          type: string
+          description: Invitation to convert to a QR Code to be usable by the SSI wallet.
+        connectionId:
+          type: string
+          format: uuid
+          description: Connection Id necessary for authentication status
+    AriesConnectionState:
+      type: string
+      enum:
+        - init
+        - created
+        - requested
+        - responded
+        - established
+        - abandoned
+      description: >
+        State of the connection:
+          * `init` - Connection invitation to be created.
+          * `created` - Connection invitation is created, waiting for the QR code to be scanned.
+          * `requested` - Mobile wallet accepted the invitation, waiting for cloud agent to respond.
+          * `responded` - Cloud wallet responded with the new connection, waiting for mobile wallet to acknowledge.
+          * `established` - Connection between the wallets is established and active.
+          * `abandoned` - The connection is closed.
+    VerificationResponse:
+      description: synchronous response of a proof request
+      type: object
+      properties:
+        connectionId:
+          type: string
+        presentationExchangeId:
+          type: string
+        errorMsg:
+          type: string
+    IssuingResponse:
+      description: synchronous response of a VC offer
+      type: object
+      properties:
+        connectionId:
+          type: string
+        credentialExchangeId:
+          type: string
+        credentialDefinitionId:
+          type: string
+        errorMsg:
+          type: string
+    VerificationOption:
+      type: object
+      properties:
+        credentialDefinitionId:
+          type: string
+        attributes:
+          type: array
+          items:
+            type: string
+    IssuingOption:
+      type: object
+      properties:
+        credentialDefinitionId:
+          type: string
+        attributes:
+          $ref: '#/components/schemas/AttributeMap'
+    AttributeMap:
+      type: object
+      additionalProperties:
+        type: string
+    CredentialDefinition:
+      type: object
+      properties:
+        credentialDefinitionId:
+          type: string
+        claims:
+          type: array
+          items:
+            type: string
