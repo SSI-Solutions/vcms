@@ -53,4 +53,4 @@ We have the following environments. The environment variables should be document
 
 ### Contributing
 
-see [CONTRIBUTING.md](https://github.com/SSI-Solutions/vcms/blob/master/CONTRIBUTING.md)
+see [CONTRIBUTING.md](https://github.com/SSI-Solutions/vcms/blob/main/CONTRIBUTING.md)
