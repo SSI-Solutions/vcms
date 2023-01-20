@@ -93,8 +93,10 @@ services:
     container_name: vcms-ui-issuer
     image: ghcr.io/ssi-solutions/vcms-ui-issuer:latest
     ports:
-      - "81:80"
+      - "81:8200"
     hostname: vcms-ui-issuer
+    env_file:
+      - configuration-issuer-frontend.env
     volumes:
       - ./configuration-issuer-frontend.json:/dist/assets/environment-config.json
 
@@ -102,7 +104,9 @@ services:
     container_name: vcms-ui-verifier
     image: ghcr.io/ssi-solutions/vcms-ui-verifier:latest
     ports:
-      - "83:80"
+      - "83:8200"
     hostname: vcms-ui-verifier
+    env_file:
+      - configuration-verifier-frontend.env
     volumes:
       - ./configuration-verifier-frontend.json:/dist/assets/environment-config.json

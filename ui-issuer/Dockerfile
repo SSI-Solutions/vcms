@@ -10,5 +10,11 @@ RUN npm install http-server -g
 COPY --from=build /src/app/dist/ui-issuer /dist
 WORKDIR /dist
 
-ENTRYPOINT ["/bin/sh", "-c" , "http-server -p 80 -d false"]
-EXPOSE 80
+RUN groupadd -r http-user && useradd --no-log-init -r -g http-user http-user
+RUN chown -R http-user /dist
+
+USER http-user
+
+ENV SERVER_PORT=""
+
+ENTRYPOINT ["/bin/bash", "-c" , "http-server -p ${SERVER_PORT:-8200} -d false"]
