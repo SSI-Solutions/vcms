@@ -2,9 +2,9 @@ openapi: 3.0.3
 info:
   title: VCMS Connector API
   description: API to request connection invitation URLs and verify state.
-  version: '1.0.0'
+  version: '${VCMS_VERSION}'
 servers:
-  - url: 'http://localhost:5000'
+  - url: 'http://localhost:8080'
     description: local dev deployment
 paths:
   /connection/invitation:

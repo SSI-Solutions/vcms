@@ -2,9 +2,9 @@ openapi: 3.0.3
 info:
   title: VCMS Verifier API
   description: API to request verification and user data.
-  version: '1.0.0'
+  version: '${VCMS_VERSION}'
 servers:
-  - url: 'http://localhost:4000'
+  - url: 'http://localhost:8081'
     description: local dev deployment
 paths:
   /verify/process:

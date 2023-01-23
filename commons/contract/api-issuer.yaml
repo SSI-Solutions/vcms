@@ -2,9 +2,9 @@ openapi: 3.0.3
 info:
   title: VCMS Issuer API
   description: API to manage Verifiable Credential Issuing
-  version: '1.0.0'
+  version: '${VCMS_VERSION}'
 servers:
-  - url: 'http://localhost:6000'
+  - url: 'http://localhost:8100'
     description: local dev deployment
 tags:
   - name: Issuing

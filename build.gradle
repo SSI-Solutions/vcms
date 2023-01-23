@@ -30,6 +30,7 @@ gradle.beforeProject { Project project ->
 def gitCommitTimestamp = grgit.head().dateTime.withZoneSameInstant(ZoneId.of('GMT')).format("yyyyMMdd'T'HHmmss'Z'")
 version = BUILD_VERSION_PREFIX + "." + gitCommitTimestamp
 
+rootProject.ext.buildVersion = BUILD_VERSION_PREFIX
 rootProject.ext.svcAcaPyImageFullName = "${svcAcaPyImageName}:${version}"
 rootProject.ext.svcTailsServerImageFullName = "${svcTailsServerImageName}:${version}"
 rootProject.ext.svcAriesFacadeImageFullName = "${svcAriesFacadeImageName}:${version}"
