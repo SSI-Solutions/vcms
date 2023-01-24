@@ -56,9 +56,18 @@ jobs:
       - name: Push docker images to registry
         run: ./gradlew pushAllImages
 
-      - name: Get build version
+      - name: Get current version
         id: current_build
         run: echo "version=$(./gradlew -q currentVersion)" >> $GITHUB_OUTPUT
+
+      - name: save OpenApi specifications for possible release
+        uses: actions/upload-artifact@v3
+        with:
+          name: openapi-specs
+          path: |
+            commons/build/contract/api-connector.yaml
+            commons/build/contract/api-issuer.yaml
+            commons/build/contract/api-verifier.yaml
 
       - name: Repository Dispatch
         uses: peter-evans/repository-dispatch@v2
@@ -67,3 +76,43 @@ jobs:
           repository: ${{ secrets.DISPATCH_REPOSITORY }}
           event-type: "push-master"
           client-payload: '{"version": "${{ steps.current_build.outputs.version }}"}'
+
+  release:
+    runs-on: ubuntu-latest
+    environment: manual-approval
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-java@v3
+        with:
+          distribution: 'adopt'
+          java-version: '11'
+
+      - uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-build-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-build-gradle-
+
+      - name: Download OpenApi specification
+        uses: actions/download-artifact@v3
+        with:
+          name: openapi-specs
+
+      - name: Get release version
+        id: release_build
+        run: echo "version=$(./gradlew -q releaseVersion)" >> $GITHUB_OUTPUT
+
+      - name: Create Release with OpenApi Specification
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ steps.release_build.outputs.version }}
+          draft: true
+          generate_release_notes: true
+          files: |
+            commons/build/contract/api-connector.yaml
+            commons/build/contract/api-issuer.yaml
+            commons/build/contract/api-verifier.yaml

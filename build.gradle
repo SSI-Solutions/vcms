@@ -180,3 +180,7 @@ dependencyCheck {
 tasks.register('currentVersion') {
 	println("$version")
 }
+
+tasks.register('releaseVersion') {
+	println("v$BUILD_VERSION_PREFIX")
+}
