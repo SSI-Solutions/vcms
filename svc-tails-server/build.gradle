@@ -7,8 +7,6 @@ plugins {
 ext {
 	buildImageName = svcTailsServerImageName
 	buildImageFullName = svcTailsServerImageFullName
-	buildImageLatestTag = "${svcTailsServerImageName}:latest"
-	releaseImageFullName = "${svcTailsServerImageName}:${BUILD_VERSION_PREFIX}"
 }
 
 task buildImage(type: DockerBuildImage, group: 'docker') {

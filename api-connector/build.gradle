@@ -41,8 +41,6 @@ configurations {
 ext {
 	buildImageName = apiConnectorImageName
 	buildImageFullName = apiConnectorImageFullname
-	buildImageLatestTag = "${apiConnectorImageName}:latest"
-	releaseImageFullName = "${apiConnectorImageName}:${BUILD_VERSION_PREFIX}"
 }
 
 // db

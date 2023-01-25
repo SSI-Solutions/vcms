@@ -49,8 +49,6 @@ configurations {
 ext {
 	buildImageName = apiIssuerImageName
 	buildImageFullName = apiIssuerImageFullName
-	buildImageLatestTag = "${apiIssuerImageName}:latest"
-	releaseImageFullName = "${apiIssuerImageName}:${BUILD_VERSION_PREFIX}"
 }
 
 test {

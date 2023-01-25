@@ -13,8 +13,6 @@ dependencies {
 ext {
 	buildImageName = uiVerifierImageName
 	buildImageFullName = uiVerifierImageFullName
-	buildImageLatestTag = "${uiVerifierImageName}:latest"
-	releaseImageFullName = "${uiVerifierImageName}:${BUILD_VERSION_PREFIX}"
 }
 
 node {

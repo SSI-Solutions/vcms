@@ -7,8 +7,6 @@ plugins {
 ext {
 	buildImageName = svcAcaPyImageName
 	buildImageFullName = svcAcaPyImageFullName
-	buildImageLatestTag = "${svcAcaPyImageName}:latest"
-	releaseImageFullName = "${svcAcaPyImageName}:${BUILD_VERSION_PREFIX}"
 }
 
 task buildImage(type: DockerBuildImage, group: 'docker') {

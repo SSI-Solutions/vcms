@@ -108,7 +108,8 @@ subprojects {
 		}
 		tasks.withType(BootBuildImage).configureEach {
 			imageName = buildImageFullName
-			tags = [buildImageLatestTag]
+			// For local development we also create the latest tag.
+			tags = [buildImageName + ":latest"]
 			environment = ['BP_JVM_TYPE'      : 'JRE',
 						   'BP_JVM_VERSION'   : containerJvmVersion,
 						   'JAVA_TOOL_OPTIONS': '-Djava.security.egd=file:/dev/./urandom',
@@ -158,7 +159,8 @@ subprojects {
 		}
 		tasks.register("pushReleaseImage", DockerPushImage) {
 			dependsOn tasks.named("retagForRelease")
-			images.add(releaseImageFullName)
+			// Use the shorthand version tag for public releases
+			images.add(buildImageName + ":${BUILD_VERSION_PREFIX}")
 			group = 'docker'
 
 			registryCredentials {

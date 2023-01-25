@@ -41,7 +41,5 @@ configurations {
 ext {
 	buildImageName = svcAriesFacadeImageName
 	buildImageFullName = svcAriesFacadeImageFullName
-	buildImageLatestTag = "${svcAriesFacadeImageName}:latest"
-	releaseImageFullName = "${svcAriesFacadeImageName}:${BUILD_VERSION_PREFIX}"
 }
 

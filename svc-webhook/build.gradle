@@ -32,8 +32,6 @@ configurations {
 ext {
 	buildImageName = svcWebhookImageName
 	buildImageFullName = svcWebhookImageFullName
-	buildImageLatestTag = "${svcWebhookImageName}:latest"
-	releaseImageFullName = "${svcWebhookImageName}:${BUILD_VERSION_PREFIX}"
 }
 
 
