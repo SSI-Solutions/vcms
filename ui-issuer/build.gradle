@@ -10,6 +10,11 @@ dependencies {
 	implementation project(":commons")
 }
 
+ext {
+	buildImageName = uiIssuerImageName
+	buildImageFullName = uiIssuerImageFullName
+}
+
 node {
 	download = false
 	version = "16.15.0"
@@ -54,13 +59,6 @@ tasks.named('check').configure {
 	dependsOn npmLint
 }
 
-task printImageFullName {
-	doLast {
-		println "${uiIssuerImageFullName}"
-		new File(buildDir, "uiIssuerImageFullName").text = "${uiIssuerImageFullName}"
-	}
-}
-
 task buildImage(type: DockerBuildImage, group: 'docker') {
 	inputDir = file("${project.projectDir}")
 	images.add("${uiIssuerImageFullName}")
@@ -70,6 +68,3 @@ task buildImage(type: DockerBuildImage, group: 'docker') {
 
 buildImage.dependsOn copyCommons
 
-pushBuildImage {
-	images.add(uiIssuerImageFullName)
-}
