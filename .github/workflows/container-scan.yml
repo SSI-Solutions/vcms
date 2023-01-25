@@ -8,8 +8,22 @@ on:
     - cron: '0 5 * * 2,5'
 
 jobs:
-  ui-issuer:
+  container-scan:
     runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        include:
+          - subproject: ui-issuer
+          - subproject: ui-verifier
+          - subproject: api-connector
+          - subproject: api-issuer
+          - subproject: api-verifier
+          - subproject: svc-aca-py
+          - subproject: svc-aries-facade
+          - subproject: svc-webhook
+
+    name: Scanning ${{ matrix.subproject }} container
 
     steps:
       - uses: actions/checkout@v3
@@ -28,11 +42,11 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
-      - name: Build ui-issuer docker image
-        run: ./gradlew ui-issuer:buildImage
+      - name: Build ${{ matrix.subproject }} docker image
+        run: ./gradlew ${{ matrix.subproject }}:buildImage
 
       - name: Saving image name to environment variable
-        run: echo "IMAGE_NAME=$(./gradlew -q ui-issuer:printImageFullName | tail -n 1)" >> $GITHUB_ENV
+        run: echo "IMAGE_NAME=$(./gradlew -q ${{ matrix.subproject }}:printImageFullName | tail -n 1)" >> $GITHUB_ENV
 
       - name: Run Vulnerability scanning and CIS benchmark against image
         uses: Azure/container-scan@v0
@@ -42,240 +56,3 @@ jobs:
           # See https://github.com/goodwithtech/dockle/issues/188
           DOCKLE_HOST: "unix:///var/run/docker.sock"
 
-  ui-verifier:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v3
-
-      - uses: actions/setup-java@v3
-        with:
-          distribution: 'adopt'
-          java-version: '11'
-
-      - uses: actions/cache@v3
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-
-      - name: Build ui-verifier docker image
-        run: ./gradlew ui-verifier:buildImage
-
-      - name: Saving image name to environment variable
-        run: echo "IMAGE_NAME=$(./gradlew -q ui-verifier:printImageFullName | tail -n 1)" >> $GITHUB_ENV
-
-      - name: Run Vulnerability scanning and CIS benchmark against image
-        uses: Azure/container-scan@v0
-        with:
-          image-name: ${{ env.IMAGE_NAME }}
-        env:
-          # See https://github.com/goodwithtech/dockle/issues/188
-          DOCKLE_HOST: "unix:///var/run/docker.sock"
-
-  api-connector:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v3
-
-      - uses: actions/setup-java@v3
-        with:
-          distribution: 'adopt'
-          java-version: '11'
-
-      - uses: actions/cache@v3
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-
-      - name: Build api-connector docker image
-        run: ./gradlew api-connector:bootBuildImage
-
-      - name: Saving image name to environment variable
-        run: echo "IMAGE_NAME=$(./gradlew -q api-connector:printImageFullName | tail -n 1)" >> $GITHUB_ENV
-
-      - name: Run Vulnerability scanning and CIS benchmark against image
-        uses: Azure/container-scan@v0
-        with:
-          image-name: ${{ env.IMAGE_NAME }}
-        env:
-          # See https://github.com/goodwithtech/dockle/issues/188
-          DOCKLE_HOST: "unix:///var/run/docker.sock"
-
-  issuer-server:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v3
-
-      - uses: actions/setup-java@v3
-        with:
-          distribution: 'adopt'
-          java-version: '11'
-
-      - uses: actions/cache@v3
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-
-      - name: Build api-issuer docker image
-        run: ./gradlew api-issuer:bootBuildImage
-
-      - name: Saving image name to environment variable
-        run: echo "API_ISSUER_IMAGE_NAME=$(./gradlew -q api-issuer:printImageFullName | tail -n 1)" >> $GITHUB_ENV
-
-      - name: Run Vulnerability scanning and CIS benchmark against api-issuer image
-        uses: Azure/container-scan@v0
-        with:
-          image-name: ${{ env.API_ISSUER_IMAGE_NAME }}
-        env:
-          # See https://github.com/goodwithtech/dockle/issues/188
-          DOCKLE_HOST: "unix:///var/run/docker.sock"
-
-  verifier-server:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v3
-
-      - uses: actions/setup-java@v3
-        with:
-          distribution: 'adopt'
-          java-version: '11'
-
-      - uses: actions/cache@v3
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-
-      - name: Build api-verifier docker image
-        run: ./gradlew api-verifier:bootBuildImage
-
-      - name: Saving image name to environment variable
-        run: echo "API_VERIFIER_IMAGE_NAME=$(./gradlew -q api-verifier:printImageFullName | tail -n 1)" >> $GITHUB_ENV
-
-      - name: Run Vulnerability scanning and CIS benchmark against api-verifier image
-        uses: Azure/container-scan@v0
-        with:
-          image-name: ${{ env.API_VERIFIER_IMAGE_NAME }}
-        env:
-          # See https://github.com/goodwithtech/dockle/issues/188
-          DOCKLE_HOST: "unix:///var/run/docker.sock"
-
-  wallet:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v3
-
-      - uses: actions/setup-java@v3
-        with:
-          distribution: 'adopt'
-          java-version: '11'
-
-      - uses: actions/cache@v3
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-
-      - name: Build svc-aca-py docker image
-        run: ./gradlew svc-aca-py:buildImage
-
-      - name: Saving image name to environment variable
-        run: echo "SVC_ACA_PY_IMAGE_NAME=$(./gradlew -q svc-aca-py:printImageFullName | tail -n 1)" >> $GITHUB_ENV
-
-      - name: Run Vulnerability scanning and CIS benchmark against svc-aca-py image
-        uses: Azure/container-scan@v0
-        with:
-          image-name: ${{ env.SVC_ACA_PY_IMAGE_NAME }}
-        env:
-          # See https://github.com/goodwithtech/dockle/issues/188
-          DOCKLE_HOST: "unix:///var/run/docker.sock"
-
-  aries-facade:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v3
-
-      - uses: actions/setup-java@v3
-        with:
-          distribution: 'adopt'
-          java-version: '11'
-
-      - uses: actions/cache@v3
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-
-      - name: Build svc-aries-facade docker image
-        run: ./gradlew svc-aries-facade:bootBuildImage
-
-      - name: Saving image name to environment variable
-        run: echo "SVC_ARIES_FACADE_IMAGE_NAME=$(./gradlew -q svc-aries-facade:printImageFullName | tail -n 1)" >> $GITHUB_ENV
-
-      - name: Run Vulnerability scanning and CIS benchmark against Aries Facade image
-        uses: Azure/container-scan@v0
-        with:
-          image-name: ${{ env.SVC_ARIES_FACADE_IMAGE_NAME }}
-        env:
-          # See https://github.com/goodwithtech/dockle/issues/188
-          DOCKLE_HOST: "unix:///var/run/docker.sock"
-
-  webhook:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v3
-
-      - uses: actions/setup-java@v3
-        with:
-          distribution: 'adopt'
-          java-version: '11'
-
-      - uses: actions/cache@v3
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-
-      - name: Build svc-webhook docker image
-        run: ./gradlew svc-webhook:bootBuildImage
-
-      - name: Saving image name to environment variable
-        run: echo "SVC_WEBHOOK_IMAGE_NAME=$(./gradlew -q svc-webhook:printImageFullName | tail -n 1)" >> $GITHUB_ENV
-
-      - name: Run Vulnerability scanning and CIS benchmark against svc-webhook image
-        uses: Azure/container-scan@v0
-        with:
-          image-name: ${{ env.SVC_WEBHOOK_IMAGE_NAME }}
-        env:
-          # See https://github.com/goodwithtech/dockle/issues/188
-          DOCKLE_HOST: "unix:///var/run/docker.sock"
