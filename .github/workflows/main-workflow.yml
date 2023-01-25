@@ -116,3 +116,7 @@ jobs:
             commons/build/contract/api-connector.yaml
             commons/build/contract/api-issuer.yaml
             commons/build/contract/api-verifier.yaml
+
+      - name: Tag docker images
+        run: ./gradlew pushReleaseImage
+
