@@ -115,7 +115,7 @@ subprojects {
 			builder = "paketobuildpacks/builder:full"
 			buildpacks(
 					[
-							"gcr.io/paketo-buildpacks/eclipse-openj9:9.8.0",
+							"gcr.io/paketo-buildpacks/eclipse-openj9:9.8.2",
 							"urn:cnb:builder:paketo-buildpacks/java" // https://github.com/spring-projects/spring-boot/issues/31233#issuecomment-1145220375
 					]
 			)

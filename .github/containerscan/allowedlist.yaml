@@ -1,0 +1,9 @@
+general:
+  vulnerabilities:
+    - CVE-2016-1000027 # https://github.com/spring-projects/spring-framework/issues/24434
+    - CVE-2022-25857 # https://github.com/spring-projects/spring-boot/issues/32221
+  bestPracticeViolations:
+    # These are info level issues, coming from buildpacks, we cant fix them
+    - CIS-DI-0005
+    - CIS-DI-0006
+    - CIS-DI-0008

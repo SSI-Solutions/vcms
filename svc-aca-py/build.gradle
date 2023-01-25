@@ -14,3 +14,10 @@ task buildImage(type: DockerBuildImage, group: 'docker') {
 pushBuildImage {
 	images.add(svcAcaPyImageFullName)
 }
+
+task printImageFullName {
+	doLast {
+		println "${svcAcaPyImageFullName}"
+		new File(buildDir, "acaPyImageTag").text = "${svcAcaPyImageFullName}"
+	}
+}
