@@ -46,6 +46,13 @@ configurations {
 	}
 }
 
+ext {
+	buildImageName = apiIssuerImageName
+	buildImageFullName = apiIssuerImageFullName
+	buildImageLatestTag = "${apiIssuerImageName}:latest"
+	releaseImageFullName = "${apiIssuerImageName}:${BUILD_VERSION_PREFIX}"
+}
+
 test {
 	useJUnitPlatform()
 }
@@ -68,19 +75,4 @@ tasks.named("bootJarMainClassName").configure {dependsOn generateSchema}
 jpaSchemaGen {
 	persistenceUnitName = "ISSUER-UNIT"
 	packageName = "com.adnovum.vcms.issuer.datamodel.ddl"
-}
-
-bootBuildImage {
-	imageName = apiIssuerImageFullName
-	tags = ["${apiIssuerImageName}:latest"]}
-
-pushBuildImage {
-	images.add(apiIssuerImageFullName)
-}
-
-task printImageFullName {
-	doLast {
-		println "${apiIssuerImageFullName}"
-		new File(buildDir, "issuerServerImageTag").text = "${apiIssuerImageFullName}"
-	}
 }

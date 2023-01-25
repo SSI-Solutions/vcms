@@ -45,20 +45,11 @@ configurations {
 	}
 }
 
-bootBuildImage {
-	imageName = apiVerifierImageFullName
-	tags = ["${apiVerifierImageName}:latest"]
-}
-
-pushBuildImage {
-	images.add(apiVerifierImageFullName)
-}
-
-task printImageFullName {
-	doLast {
-		println "${apiVerifierImageFullName}"
-		new File(buildDir, "verifierServerImageTag").text = "${apiVerifierImageFullName}"
-	}
+ext {
+	buildImageName = apiVerifierImageName
+	buildImageFullName = apiVerifierImageFullName
+	buildImageLatestTag = "${apiVerifierImageName}:latest"
+	releaseImageFullName = "${apiVerifierImageName}:${BUILD_VERSION_PREFIX}"
 }
 
 // db schema

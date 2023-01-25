@@ -38,20 +38,11 @@ configurations {
 	}
 }
 
-task printImageFullName {
-	doLast {
-		println "${apiConnectorImageFullname}"
-		new File(buildDir, "connectorImageTag").text = "${apiConnectorImageFullname}"
-	}
-}
-
-bootBuildImage {
-	imageName = apiConnectorImageFullname
-	tags = ["${apiConnectorImageName}:latest"]
-}
-
-pushBuildImage {
-	images.add(apiConnectorImageFullname)
+ext {
+	buildImageName = apiConnectorImageName
+	buildImageFullName = apiConnectorImageFullname
+	buildImageLatestTag = "${apiConnectorImageName}:latest"
+	releaseImageFullName = "${apiConnectorImageName}:${BUILD_VERSION_PREFIX}"
 }
 
 // db

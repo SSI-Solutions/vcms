@@ -10,6 +10,13 @@ dependencies {
 	implementation project(":commons")
 }
 
+ext {
+	buildImageName = uiVerifierImageName
+	buildImageFullName = uiVerifierImageFullName
+	buildImageLatestTag = "${uiVerifierImageName}:latest"
+	releaseImageFullName = "${uiVerifierImageName}:${BUILD_VERSION_PREFIX}"
+}
+
 node {
 	download = false
 	version = "16.15.0"
@@ -54,13 +61,6 @@ tasks.named('check').configure {
 	dependsOn npmLint
 }
 
-task printImageFullName {
-	doLast {
-		println "${uiVerifierImageFullName}"
-		new File(buildDir, "uiVerifierImageFullName").text = "${uiVerifierImageFullName}"
-	}
-}
-
 task buildImage(type: DockerBuildImage, group: 'docker') {
 	inputDir = file("${project.projectDir}")
 	images.add("${uiVerifierImageFullName}")
@@ -70,6 +70,4 @@ task buildImage(type: DockerBuildImage, group: 'docker') {
 
 buildImage.dependsOn copyCommons
 
-pushBuildImage {
-	images.add(uiVerifierImageFullName)
-}
+

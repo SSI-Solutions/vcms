@@ -38,18 +38,10 @@ configurations {
 	}
 }
 
-bootBuildImage {
-	imageName = svcAriesFacadeImageFullName
-	tags = ["${svcAriesFacadeImageName}:latest"]
+ext {
+	buildImageName = svcAriesFacadeImageName
+	buildImageFullName = svcAriesFacadeImageFullName
+	buildImageLatestTag = "${svcAriesFacadeImageName}:latest"
+	releaseImageFullName = "${svcAriesFacadeImageName}:${BUILD_VERSION_PREFIX}"
 }
 
-pushBuildImage {
-	images.add(svcAriesFacadeImageFullName)
-}
-
-task printImageFullName {
-	doLast {
-		println "${svcAriesFacadeImageFullName}"
-		new File(buildDir, "AriesFacadeImageTag").text = "${svcAriesFacadeImageFullName}"
-	}
-}
