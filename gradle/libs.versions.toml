@@ -1,5 +1,5 @@
 [versions]
-bmuschko-docker = "7.1.0"
+bmuschko-docker = "9.1.0"
 grgit = "5.0.0"
 flyway = "9.4.0"
 jpa-schema-gen = "1.1.20200614081240"
