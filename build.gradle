@@ -1,5 +1,7 @@
 import com.bmuschko.gradle.docker.tasks.image.DockerBuildImage
 import com.bmuschko.gradle.docker.tasks.image.DockerPushImage
+import com.bmuschko.gradle.docker.tasks.image.DockerPullImage
+import com.bmuschko.gradle.docker.tasks.image.DockerTagImage
 import org.springframework.boot.gradle.plugin.SpringBootPlugin
 import org.springframework.boot.gradle.tasks.bundling.BootBuildImage
 
@@ -8,7 +10,7 @@ plugins {
 	id 'jacoco'
 	alias(libs.plugins.bmuschko.docker) apply false
 	alias(libs.plugins.grgit)
-    alias(libs.plugins.jpa.schema.gen) apply false
+	alias(libs.plugins.jpa.schema.gen) apply false
 	alias(libs.plugins.openapi.generator) apply false
 	alias(libs.plugins.sonarqube)
 	alias(libs.plugins.spring.boot) apply false
@@ -84,7 +86,7 @@ subprojects {
 			into 'build/resources/main'
 		}
 
-		tasks.named("assemble").configure{
+		tasks.named("assemble").configure {
 			finalizedBy getLogConfig
 		}
 
@@ -105,10 +107,12 @@ subprojects {
 			}
 		}
 		tasks.withType(BootBuildImage).configureEach {
+			imageName = buildImageFullName
+			tags = [buildImageLatestTag]
 			environment = ['BP_JVM_TYPE'      : 'JRE',
 						   'BP_JVM_VERSION'   : containerJvmVersion,
 						   'JAVA_TOOL_OPTIONS': '-Djava.security.egd=file:/dev/./urandom',
-						   'BP_OCI_SOURCE': githubRepo]
+						   'BP_OCI_SOURCE'    : githubRepo]
 			publish = false
 			// We need curl for healthchecks and base builder does not include it
 			builder = "paketobuildpacks/builder:full"
@@ -122,13 +126,54 @@ subprojects {
 	}
 	// All modules use bmuschko plugin for pushing the image
 	pluginManager.withPlugin('com.bmuschko.docker-remote-api') {
-		task pushBuildImage(type: DockerPushImage, group: 'docker') {
+		tasks.register("pushBuildImage", DockerPushImage) {
+			images.add(buildImageFullName)
+			group = 'docker'
+
 			registryCredentials {
 				url = registry_repo
 				username = registry_username
 				password = registry_password
 			}
 		}
+
+		tasks.register("pullBuildImage", DockerPullImage) {
+			group = 'docker'
+			image = buildImageFullName
+
+			registryCredentials {
+				url = registry_repo
+				username = registry_username
+				password = registry_password
+			}
+		}
+		tasks.register("retagForRelease", DockerTagImage) {
+			dependsOn tasks.named("pullBuildImage")
+			group = 'docker'
+
+			tag = BUILD_VERSION_PREFIX
+			repository = buildImageName
+			targetImageId buildImageFullName
+
+		}
+		tasks.register("pushReleaseImage", DockerPushImage) {
+			dependsOn tasks.named("retagForRelease")
+			images.add(releaseImageFullName)
+			group = 'docker'
+
+			registryCredentials {
+				url = registry_repo
+				username = registry_username
+				password = registry_password
+			}
+		}
+
+		tasks.register("printImageFullName") {
+			doLast {
+				println buildImageFullName
+			}
+		}
+
 	}
 	pluginManager.withPlugin('node-base') {
 		tasks.withType(KarmaTestTask).configureEach {
@@ -159,7 +204,7 @@ sonarqube {
 
 
 task buildAllImages(group: 'dockerAll', description: 'Build docker images for all the existing modules.') {
-	dependsOn subprojects.collect { it.tasks.withType(BootBuildImage) } , subprojects.collect { it.tasks.withType(DockerBuildImage) }
+	dependsOn subprojects.collect { it.tasks.withType(BootBuildImage) }, subprojects.collect { it.tasks.withType(DockerBuildImage) }
 }
 
 
