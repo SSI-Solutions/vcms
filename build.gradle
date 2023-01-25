@@ -202,15 +202,12 @@ sonarqube {
 	}
 }
 
-
-task buildAllImages(group: 'dockerAll', description: 'Build docker images for all the existing modules.') {
+tasks.register("buildAllImages") {
+	group = 'dockerAll'
+	description = 'Build docker images for all the existing modules.'
 	dependsOn subprojects.collect { it.tasks.withType(BootBuildImage) }, subprojects.collect { it.tasks.withType(DockerBuildImage) }
 }
 
-
-task pushAllImages(group: 'dockerAll', description: 'Push all existing images to repository. Will build missing images') {
-	dependsOn subprojects.collect { it.tasks.withType(DockerPushImage) }
-}
 
 check {
 	finalizedBy subprojects.collect { it.tasks.withType(JacocoReport) }

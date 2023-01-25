@@ -54,7 +54,7 @@ jobs:
         run: ./gradlew buildAllImages
 
       - name: Push docker images to registry
-        run: ./gradlew pushAllImages
+        run: ./gradlew pushBuildImage
 
       - name: Get build version
         id: current_build
