@@ -208,7 +208,6 @@ tasks.register("buildAllImages") {
 	dependsOn subprojects.collect { it.tasks.withType(BootBuildImage) }, subprojects.collect { it.tasks.withType(DockerBuildImage) }
 }
 
-
 check {
 	finalizedBy subprojects.collect { it.tasks.withType(JacocoReport) }
 }
