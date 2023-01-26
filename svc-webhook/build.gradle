@@ -29,24 +29,12 @@ configurations {
 	}
 }
 
+ext {
+	buildImageName = svcWebhookImageName
+	buildImageFullName = svcWebhookImageFullName
+}
+
+
 test {
 	useJUnitPlatform()
-}
-
-// docker
-
-bootBuildImage {
-	imageName = svcWebhookImageFullName
-	tags = ["${svcWebhookImageName}:latest"]
-}
-
-pushBuildImage {
-	images.add(svcWebhookImageFullName)
-}
-
-task printImageFullName {
-	doLast {
-		println "${svcWebhookImageFullName}"
-		new File(buildDir, "beImageTag").text = "${svcWebhookImageFullName}"
-	}
 }

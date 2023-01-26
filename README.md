@@ -1,7 +1,7 @@
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=vcms&metric=alert_status&token=bc51db3c288fb9c6996e5213bcdbd0389139b13a)](https://sonarcloud.io/summary/new_code?id=vcms)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=vcms&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=vcms)
 # Verifiable Credential Management System (VCMS)
 
-VCMS is a system that abstract SSI technologies and enables technology agnostic integration in existing systems.
+VCMS is a system that abstract SSI technologies and enables technology-agnostic integration in existing systems.
 
 The system currently offers the following features:
 

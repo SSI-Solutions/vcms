@@ -4,20 +4,14 @@ plugins {
 	alias(libs.plugins.bmuschko.docker)
 }
 
+ext {
+	buildImageName = svcAcaPyImageName
+	buildImageFullName = svcAcaPyImageFullName
+}
+
 task buildImage(type: DockerBuildImage, group: 'docker') {
 	inputDir = file("${project.projectDir}")
 	images.add(svcAcaPyImageFullName)
 	images.add("${svcAcaPyImageName}:latest")
 	labels.put("org.opencontainers.image.source", "${githubRepo}")
-}
-
-pushBuildImage {
-	images.add(svcAcaPyImageFullName)
-}
-
-task printImageFullName {
-	doLast {
-		println "${svcAcaPyImageFullName}"
-		new File(buildDir, "acaPyImageTag").text = "${svcAcaPyImageFullName}"
-	}
 }
