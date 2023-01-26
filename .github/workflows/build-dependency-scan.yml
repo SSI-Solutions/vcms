@@ -1,4 +1,4 @@
-name: Vulnerability scanning of build time dependencies
+name: OWASP scan
 
 on:
   push:
@@ -32,6 +32,7 @@ jobs:
         run: ./gradlew dependencyCheckAggregate
 
       - uses: actions/upload-artifact@v3
+        if: always()
         with:
           name: dependency-reports
           path: build/reports/dependency-check-report.html
