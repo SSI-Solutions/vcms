@@ -8,7 +8,52 @@ on:
     - cron: '0 5 * * 2,5'
 
 jobs:
-  container-scan:
+  container-scan-spring-builder:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        include:
+          - subproject: api-connector
+          - subproject: api-issuer
+          - subproject: api-verifier
+          - subproject: svc-aries-facade
+          - subproject: svc-webhook
+
+    name: ${{ matrix.subproject }}
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-java@v3
+        with:
+          distribution: 'adopt'
+          java-version: '11'
+
+      - uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Build ${{ matrix.subproject }} docker image
+        run: ./gradlew ${{ matrix.subproject }}:bootBuildImage
+
+      - name: Saving image name to environment variable
+        run: echo "IMAGE_NAME=$(./gradlew -q ${{ matrix.subproject }}:printImageFullName | tail -n 1)" >> $GITHUB_ENV
+
+      - name: Run Vulnerability scanning and CIS benchmark against image
+        uses: Azure/container-scan@v0
+        with:
+          image-name: ${{ env.IMAGE_NAME }}
+        env:
+          # See https://github.com/goodwithtech/dockle/issues/188
+          DOCKLE_HOST: "unix:///var/run/docker.sock"
+          
+  container-scan-bmuschko-builder:
     runs-on: ubuntu-latest
 
     strategy:
@@ -16,14 +61,9 @@ jobs:
         include:
           - subproject: ui-issuer
           - subproject: ui-verifier
-          - subproject: api-connector
-          - subproject: api-issuer
-          - subproject: api-verifier
           - subproject: svc-aca-py
-          - subproject: svc-aries-facade
-          - subproject: svc-webhook
 
-    name: Scanning ${{ matrix.subproject }} container
+    name: ${{ matrix.subproject }}
 
     steps:
       - uses: actions/checkout@v3
@@ -55,4 +95,6 @@ jobs:
         env:
           # See https://github.com/goodwithtech/dockle/issues/188
           DOCKLE_HOST: "unix:///var/run/docker.sock"
+
+
 
