@@ -78,6 +78,7 @@ jobs:
           client-payload: '{"version": "${{ steps.current_build.outputs.version }}"}'
 
   release:
+    needs: build
     runs-on: ubuntu-latest
     environment: manual-approval
     steps:
