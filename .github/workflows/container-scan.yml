@@ -53,7 +53,7 @@ jobs:
         env:
           # See https://github.com/goodwithtech/dockle/issues/188
           DOCKLE_HOST: "unix:///var/run/docker.sock"
-          
+
   container-scan-bmuschko-builder:
     runs-on: ubuntu-latest
 
@@ -97,6 +97,3 @@ jobs:
         env:
           # See https://github.com/goodwithtech/dockle/issues/188
           DOCKLE_HOST: "unix:///var/run/docker.sock"
-
-
-
