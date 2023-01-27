@@ -46,12 +46,14 @@ sourceSets {
 tasks.named("compileJava").configure {
 	dependsOn tasks.withType(GenerateTask)
 }
+
 // We are not using the default generation task, the generators are customized in their own task.
 tasks.named("openApiGenerate").configure {
 	enabled = false
 }
 
 tasks.withType(GenerateTask).configureEach {
+	dependsOn ":commons:setVcmsVersionToContractTemplates"
 	generateModelTests = false
 	generateModelDocumentation = false
 	generateApiTests = false
@@ -60,7 +62,7 @@ tasks.withType(GenerateTask).configureEach {
 
 task buildWebhookServer(type: GenerateTask) {
 	generatorName = "spring"
-	def inputPath = "${projectDir}/contract/svc-webhook.yaml".toString()
+	def inputPath = "${project.buildDir}/contract/svc-webhook.yaml".toString()
 	def outputPath = "${project.buildDir}/generated/openapi/webhook-server".toString()
 	inputSpec = inputPath
 	outputDir = outputPath
@@ -75,7 +77,7 @@ task buildWebhookServer(type: GenerateTask) {
 
 task buildVerifierServer(type: GenerateTask) {
 	generatorName = "spring"
-	def inputPath = "${projectDir}/contract/api-verifier.yaml".toString()
+	def inputPath = "${project.buildDir}/contract/api-verifier.yaml".toString()
 	def outputPath = "${project.buildDir}/generated/openapi/verifier-server".toString()
 	inputSpec = inputPath
 	outputDir = outputPath
@@ -90,7 +92,7 @@ task buildVerifierServer(type: GenerateTask) {
 
 task buildIssuerServer(type: GenerateTask) {
 	generatorName = "spring"
-	def inputPath = "${projectDir}/contract/api-issuer.yaml".toString()
+	def inputPath = "${project.buildDir}/contract/api-issuer.yaml".toString()
 	def outputPath = "${project.buildDir}/generated/openapi/issuer-server".toString()
 	inputSpec = inputPath
 	outputDir = outputPath
@@ -105,7 +107,7 @@ task buildIssuerServer(type: GenerateTask) {
 
 task buildConnectorServer(type: GenerateTask) {
 	generatorName = "spring"
-	def inputPath = "${projectDir}/contract/api-connector.yaml".toString()
+	def inputPath = "${project.buildDir}/contract/api-connector.yaml".toString()
 	def outputPath = "${project.buildDir}/generated/openapi/connector-server".toString()
 	inputSpec = inputPath
 	outputDir = outputPath
@@ -120,7 +122,7 @@ task buildConnectorServer(type: GenerateTask) {
 
 task buildAriesFacadeServer(type: GenerateTask) {
 	generatorName = "spring"
-	def inputPath = "${projectDir}/contract/svc-aries-facade.yaml".toString()
+	def inputPath = "${project.buildDir}/contract/svc-aries-facade.yaml".toString()
 	def outputPath = "${project.buildDir}/generated/openapi/aries-facade-server".toString()
 	inputSpec = inputPath
 	outputDir = outputPath
@@ -137,7 +139,7 @@ task buildAriesFacadeServer(type: GenerateTask) {
 
 task buildAriesFacadeJavaClient(type: GenerateTask) {
 	generatorName = "java"
-	def inputPath = "${projectDir}/contract/svc-aries-facade.yaml".toString()
+	def inputPath = "${project.buildDir}/contract/svc-aries-facade.yaml".toString()
 	def outputPath = "${project.buildDir}/generated/openapi/aries-facade-java-client".toString()
 	inputSpec = inputPath
 	outputDir = outputPath
@@ -172,7 +174,7 @@ task buildAcaPyJavaClient(type: GenerateTask) {
 
 task buildIssuerUiClient(type: GenerateTask) {
 	generatorName = "typescript-angular"
-	def inputPath = "${projectDir}/contract/api-issuer.yaml".toString()
+	def inputPath = "${project.buildDir}/contract/api-issuer.yaml".toString()
 	def outputPath = "${project.buildDir}/generated/openapi/issuer-ui-client".toString()
 	inputSpec = inputPath
 	outputDir = outputPath
@@ -180,7 +182,7 @@ task buildIssuerUiClient(type: GenerateTask) {
 
 task buildVerifierClient(type: GenerateTask) {
 	generatorName = "typescript-angular"
-	def inputPath = "${projectDir}/contract/api-verifier.yaml".toString()
+	def inputPath = "${project.buildDir}/contract/api-verifier.yaml".toString()
 	def outputPath = "${project.buildDir}/generated/openapi/verifier-ui-client".toString()
 	inputSpec = inputPath
 	outputDir = outputPath
@@ -188,8 +190,16 @@ task buildVerifierClient(type: GenerateTask) {
 
 task buildConnectorUiClient(type: GenerateTask) {
 	generatorName = "typescript-angular"
-	def inputPath = "${projectDir}/contract/api-connector.yaml".toString()
+	def inputPath = "${project.buildDir}/contract/api-connector.yaml".toString()
 	def outputPath = "${project.buildDir}/generated/openapi/connector-ui-client".toString()
 	inputSpec = inputPath
 	outputDir = outputPath
+}
+
+task setVcmsVersionToContractTemplates(type: Copy) {
+	from './contract'
+	include '*.yaml'
+	include '*.json'
+	into "${project.buildDir}/contract"
+	filter { line -> line.replaceAll('\\$\\{VCMS_VERSION\\}', buildVersion) }
 }

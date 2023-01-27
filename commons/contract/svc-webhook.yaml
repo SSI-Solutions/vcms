@@ -2,9 +2,9 @@ openapi: 3.0.3
 info:
   title: VCMS Webhook for Acapy
   description: Webhook definition to listen to Acapy specific events
-  version: '1.0.0'
+  version: '${VCMS_VERSION}'
 servers:
-  - url: 'http://localhost:8000'
+  - url: 'http://localhost:5000'
     description: local dev deployment
 tags:
   - name: Event

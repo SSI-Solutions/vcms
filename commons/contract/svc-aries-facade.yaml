@@ -2,7 +2,7 @@ openapi: 3.0.3
 info:
   title: VCMS Aries Facade API
   description: API Facade for the Aca-Py agent
-  version: '1.0.0'
+  version: '${VCMS_VERSION}'
 servers:
   - url: 'http://localhost:8000'
     description: local dev deployment
