@@ -114,9 +114,9 @@ jobs:
           draft: true
           generate_release_notes: true
           files: |
-            commons/build/contract/api-connector.yaml
-            commons/build/contract/api-issuer.yaml
-            commons/build/contract/api-verifier.yaml
+            vcms/commons/build/contract/api-connector.yaml
+            vcms/commons/build/contract/api-issuer.yaml
+            vcms/commons/build/contract/api-verifier.yaml
 
       - name: Tag docker images
         run: ./gradlew pushReleaseImage
