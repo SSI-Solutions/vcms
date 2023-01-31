@@ -43,7 +43,7 @@
     "@typescript-eslint/eslint-plugin": "5.44.0",
     "@typescript-eslint/parser": "5.44.0",
     "eslint": "^8.18.0",
-    "eslint-plugin-sonarjs": "^0.16.0",
+    "eslint-plugin-sonarjs": "^0.18.0",
     "jasmine-core": "~4.4.0",
     "karma": "~6.4.0",
     "karma-chrome-launcher": "~3.1.0",
