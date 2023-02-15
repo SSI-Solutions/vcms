@@ -47,7 +47,7 @@ We have the following environments. The environment variables should be document
 
 #### Notes for windows development :
 
-- Install ngrok through chocolatey. Start console as admin to use it.
+- Install `ngrok` through `chocolatey`. Start `Command Prompt` as admin to use it.
 - There might be issues with line-endings, use Git Bash to fix them: `find . -type f -name "*.sh"  -print0  | xargs -0  dos2unix`
 - Rebuild the affected images.
 
