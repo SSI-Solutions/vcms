@@ -12,6 +12,7 @@
 [ -z "$WALLET_NAME" ] && echo "Missing WALLET_NAME exiting" && exit 1
 [ -z "$WALLET_KEY" ] && echo "Missing WALLET_KEY exiting" && exit 1
 [ -z "$TAILS_SERVER_URL" ] && echo "Missing TAILS_SERVER_URL exiting" && exit 1
+[ -z "$ACAPY_DEBUG_WEBHOOKS" ] && echo "Missing ACAPY_DEBUG_WEBHOOKS exiting" && exit 1
 
 ADMIN_URL="http://${ADMIN_IP}:${ADMIN_PORT}"
 ENDPOINT_URL="http://${ENDPOINT_IP}:${ENDPOINT_PORT}"

@@ -53,6 +53,7 @@ public class WebhookService {
 		);
 
 		if (presentationExchange.getPresentation() != null) {
+			// The presentation is part of the exchange when webhook messages are in debug mode.
 			Map<String, V10PresentationExchangePresentationRequestedProofRevealedAttrs> revealedAttrsMap = presentationExchange
 					.getPresentation().getRequestedProof().getRevealedAttrs();
 			Map<String, String> revealedAttributes = revealedAttrsMap.entrySet().stream()
