@@ -12,7 +12,6 @@
 [ -z "$WALLET_NAME" ] && echo "Missing WALLET_NAME exiting" && exit 1
 [ -z "$WALLET_KEY" ] && echo "Missing WALLET_KEY exiting" && exit 1
 [ -z "$TAILS_SERVER_URL" ] && echo "Missing TAILS_SERVER_URL exiting" && exit 1
-[ -z "$ACAPY_DEBUG_WEBHOOKS" ] && echo "Missing ACAPY_DEBUG_WEBHOOKS exiting" && exit 1
 
 ADMIN_URL="http://${ADMIN_IP}:${ADMIN_PORT}"
 ENDPOINT_URL="http://${ENDPOINT_IP}:${ENDPOINT_PORT}"
@@ -56,6 +55,12 @@ else
 	echo "Wallet found."
 fi
 
+if [ -z "${ACAPY_DEBUG_WEBHOOKS}" ]; then
+  echo "Defaulting webhooks to the verbose debug mode."
+  export ACAPY_DEBUG_WEBHOOKS=true
+fi
+
+
 echo "Starting AcaPy agent ..."
 echo -----------------------
 echo "Listening:	  ADMIN_URL:			  ${ADMIN_URL}"
@@ -65,6 +70,7 @@ echo "Connecting:	  LEDGER_URL:			  ${LEDGER_URL}"
 echo "DID service:	DID_ENDPOINT_URL:	${DID_ENDPOINT_URL} (must be accessible by other agents)"
 echo "Wallet name:	WALLET_NAME:		  ${WALLET_NAME}"
 echo "Label:		    LABEL:				    ${LABEL}"
+echo "Webhook debug mode:        ${ACAPY_DEBUG_WEBHOOKS}"
 echo "TAILS_SERVER_URL:       		    ${TAILS_SERVER_URL}"
 echo -----------------------
 
