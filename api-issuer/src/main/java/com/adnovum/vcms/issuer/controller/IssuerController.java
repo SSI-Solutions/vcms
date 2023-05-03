@@ -70,7 +70,7 @@ public class IssuerController implements IssueApi {
 		log.debug("creating issuing state and claims for connection {} and exchange {} and holder {}", connectionId,
 				credentialExchangeId, holder.getUserId());
 		IssuingProcess issuingProcess = issuingProcessService.createIssuingProcess(connectionId, credentialExchangeId, holder);
-		claimService.createClaims(issuingProcess, issuingRequest.getAttributes());
+		claimService.persistClaims(issuingProcess, issuingRequest.getAttributes());
 
 		issuingResponse.setStatus(issuingProcess.getProcessState().getIssuStatus());
 		issuingResponse.setProcessId(issuingProcess.getId());

@@ -5,8 +5,10 @@ import com.adnovum.vcms.common.datamodel.configuration.VcmsCorsConfiguration;
 import com.adnovum.vcms.common.exception.ErrorHandler;
 import com.adnovum.vcms.common.security.ApiSecurityConfig;
 import com.adnovum.vcms.common.service.AriesFacadeClient;
+import com.adnovum.vcms.common.service.AriesFacadeProperties;
 import com.adnovum.vcms.genapi.aries.facade.client.ApiClient;
 import com.adnovum.vcms.genapi.aries.facade.client.controller.RevocationApi;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -19,8 +21,8 @@ import org.springframework.context.annotation.Import;
 		AriesFacadeClient.class})
 public class IssuerServerApplication {
 
-	@Value("${aries.facade.basePath}")
-	private String ariesFacadeBasePath = "";
+	@Autowired
+	protected AriesFacadeProperties ariesFacadeProperties;
 
 	public static void main(String[] args) {
 		SpringApplication.run(IssuerServerApplication.class, args);
@@ -29,7 +31,7 @@ public class IssuerServerApplication {
 	@Bean
 	public RevocationApi apiClient() {
 		ApiClient apiClient = new ApiClient();
-		apiClient.setBasePath(ariesFacadeBasePath);
+		apiClient.setBasePath(ariesFacadeProperties.getBasePath());
 		return new RevocationApi(apiClient);
 	}
 }
