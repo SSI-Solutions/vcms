@@ -7,9 +7,6 @@ logging:
 
 aries.facade.basePath: ${ARIES_FACADE_BASEPATH:http://localhost:8000}
 
-vcms.rabbitmq.queues:
-  credential: ${RABBITMQ_CREDENTIAL_Q:issuerCredentialQueue}
-
 spring:
   jpa:
     open-in-view: false
@@ -56,6 +53,11 @@ springdoc:
     disable-swagger-default-url: true
 
 vcms:
+  features:
+    storeClaims: true
+  rabbitmq:
+    queues:
+      credential: ${RABBITMQ_CREDENTIAL_Q:issuerCredentialQueue}
   cors:
     allowCredentials: ${VCMS_CORS_ALLOW_CREDENTIALS:true}
     allowedOriginPatterns: ${VCMS_CORS_ALLOWED_ORIGIN_PATTERNS:*}

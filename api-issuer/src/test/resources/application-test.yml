@@ -19,7 +19,9 @@ spring:
     encoding: UTF-8
   hibernate:
     ddl-auto: create
-
+vcms:
+    features:
+        storeClaims: true
 vcms.rabbitmq.queues:
   credential: ${RABBITMQ_CREDENTIAL_Q:issuerCredentialQueue}
 

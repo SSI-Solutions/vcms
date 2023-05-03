@@ -4,6 +4,8 @@ import java.util.Map;
 import java.util.UUID;
 import javax.servlet.Filter;
 
+import com.adnovum.vcms.common.service.AriesFacadeProperties;
+import com.adnovum.vcms.common.service.VcmsFeatureProperties;
 import com.adnovum.vcms.common.test.SharedPostgresqlContainer;
 import com.adnovum.vcms.issuer.datamodel.entity.Holder;
 import com.adnovum.vcms.issuer.datamodel.entity.IssuingProcess;
@@ -65,6 +67,12 @@ public abstract class IssuerServerIntTestBase {
 	@Autowired
 	private Filter springSecurityFilterChain;
 
+	@Autowired
+	protected VcmsFeatureProperties vcmsFeatureProperties;
+
+	@Autowired
+	protected AriesFacadeProperties ariesFacadeProperties;
+
 	@BeforeEach
 	void cleanup() {
 		claimRepository.deleteAll();
@@ -99,6 +107,6 @@ public abstract class IssuerServerIntTestBase {
 				test + "_key1", test + "_value1",
 				test + "_key2", test + "_value2",
 				test + "_key3", test + "_value3");
-		claimService.createClaims(issuingProcess, claims);
+		claimService.persistClaims(issuingProcess, claims);
 	}
 }

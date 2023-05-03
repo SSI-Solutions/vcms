@@ -1,16 +1,20 @@
 package com.adnovum.vcms.issuer.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+import com.adnovum.vcms.common.service.VcmsFeatureProperties;
 import com.adnovum.vcms.issuer.IssuerServerIntTestBase;
 import com.adnovum.vcms.issuer.datamodel.entity.Claim;
 import com.adnovum.vcms.issuer.datamodel.entity.IssuingProcess;
+import com.adnovum.vcms.issuer.datamodel.repository.ClaimRepository;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 class ClaimServiceTest extends IssuerServerIntTestBase {
 
@@ -25,7 +29,7 @@ class ClaimServiceTest extends IssuerServerIntTestBase {
 		String credentialExchangeId = UUID.randomUUID().toString();
 
 		IssuingProcess issuingProcess = createIssuingProcess(connectionId, credentialExchangeId, test);
-		claimService.createClaims(issuingProcess, claimNames);
+		claimService.persistClaims(issuingProcess, claimNames);
 
 		Set<Claim> claims = claimRepository.findAllByIssuingProcessId(issuingProcess.getId());
 		assertThat(claims).hasSize(3);
@@ -35,7 +39,7 @@ class ClaimServiceTest extends IssuerServerIntTestBase {
 		});
 
 		IssuingProcess issuingProcess1 = issuingProcessService.getIssuingProcessById(issuingProcess.getId());
-		claimService.createClaims(issuingProcess1, Map.of(test + "_key4", test + "_value4"));
+		claimService.persistClaims(issuingProcess1, Map.of(test + "_key4", test + "_value4"));
 		claims = claimRepository.findAllByIssuingProcessId(issuingProcess1.getId());
 		assertThat(claims).hasSize(4);
 	}
@@ -47,7 +51,7 @@ class ClaimServiceTest extends IssuerServerIntTestBase {
 		String credentialExchangeId = UUID.randomUUID().toString();
 
 		IssuingProcess issuingProcess = createIssuingProcess(connectionId, credentialExchangeId, test);
-		claimService.createClaims(issuingProcess, Map.of(
+		claimService.persistClaims(issuingProcess, Map.of(
 				"keyWithEmptyValue", "")
 		);
 
@@ -65,7 +69,7 @@ class ClaimServiceTest extends IssuerServerIntTestBase {
 		IssuingProcess issuingProcess = createIssuingProcess(connectionId, credentialExchangeId, test);
 		final Map<String, String> newClaims = new HashMap<String, String>();
 		newClaims.put("conn_id", null);
-		claimService.createClaims(issuingProcess, newClaims);
+		claimService.persistClaims(issuingProcess, newClaims);
 
 		Set<Claim> claims = claimRepository.findAllByIssuingProcessId(issuingProcess.getId());
 		assertThat(claims).hasSize(1);
@@ -81,9 +85,32 @@ class ClaimServiceTest extends IssuerServerIntTestBase {
 		IssuingProcess issuingProcess = createIssuingProcess(connectionId, credentialExchangeId, test);
 		HashMap<String, String> newClaims = new HashMap<>();
 		newClaims.put(null, "validValue");
-		claimService.createClaims(issuingProcess, newClaims);
+		claimService.persistClaims(issuingProcess, newClaims);
 
 		Set<Claim> claims = claimRepository.findAllByIssuingProcessId(issuingProcess.getId());
 		assertThat(claims).hasSize(0);
+	}
+
+	@Test
+	void claimPersistenceCanBeTurnedOff() {
+		VcmsFeaturesPropertiesImpl turnedOffFeatureFlag = new VcmsFeaturesPropertiesImpl();
+		turnedOffFeatureFlag.setStoreClaims(Boolean.FALSE);
+		ClaimRepository mockedRepo = mock(ClaimRepository.class);
+		ClaimService claimServiceNoPersistence = new ClaimService(mockedRepo,turnedOffFeatureFlag);
+		String test = "createClaims";
+		UUID connectionId = UUID.randomUUID();
+		String credentialExchangeId = UUID.randomUUID().toString();
+
+		IssuingProcess issuingProcess = createIssuingProcess(connectionId, credentialExchangeId, test);
+		HashMap<String, String> newClaims = new HashMap<>();
+		newClaims.put("validKey", "validValue");
+
+		claimServiceNoPersistence.persistClaims(issuingProcess,newClaims);
+		Mockito.verifyNoMoreInteractions(mockedRepo);
+
+		// Testing the control behaviour of persistence
+		claimService.persistClaims(issuingProcess, newClaims);
+		Set<Claim> claims = claimRepository.findAllByIssuingProcessId(issuingProcess.getId());
+		assertThat(claims).hasSize(1);
 	}
 }
