@@ -37,6 +37,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Slf4j
 @Component
@@ -116,10 +118,25 @@ public class AcaPyClient {
 	protected V10CredentialExchange sendCredentialOffer(String creDefId, UUID connectionId, String comment, Map<String, String> claimMap) {
 
 		List<CredAttrSpec> attributes = new LinkedList<>();
-		for (Map.Entry<String, String> entry: claimMap.entrySet()) {
+		for (Map.Entry<String, String> entry : claimMap.entrySet()) {
 			CredAttrSpec attribute = new CredAttrSpec();
-			attribute.setValue(entry.getValue() == null ? "" : entry.getValue());
-			attribute.setMimeType("text/plain");
+			String rawClaimValue = entry.getValue() == null ? "" : entry.getValue();
+			String claimValueToPersist;
+			String mimeType;
+			Pattern pattern = Pattern.compile("^data:(.*?)(;base64)?,(.*)$");
+			Matcher matcher = pattern.matcher(rawClaimValue);
+
+			if (!matcher.matches()) {
+				claimValueToPersist = rawClaimValue;
+				mimeType = "text/plain";
+
+			} else {
+				mimeType = matcher.group(1);
+				mimeType = mimeType.isEmpty() ? "text/plain" : mimeType;
+				claimValueToPersist = matcher.group(3);
+			}
+			attribute.setValue(claimValueToPersist);
+			attribute.setMimeType(mimeType);
 			attribute.setName(entry.getKey());
 			attributes.add(attribute);
 		}
@@ -154,6 +171,6 @@ public class AcaPyClient {
 	}
 
 	public Object getRevocationStatus(String credExId) {
-		return revocationApi.revocationCredentialRecordGet(credExId,null,null);
+		return revocationApi.revocationCredentialRecordGet(credExId, null, null);
 	}
 }
