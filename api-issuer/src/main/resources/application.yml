@@ -5,7 +5,8 @@ logging:
   level:
     root: ${LOG_LEVEL:INFO}
 
-aries.facade.basePath: ${ARIES_FACADE_BASEPATH:http://localhost:8000}
+aries.facade:
+  basePath: ${ARIES_FACADE_BASEPATH:http://localhost:8000}
 
 spring:
   jpa:

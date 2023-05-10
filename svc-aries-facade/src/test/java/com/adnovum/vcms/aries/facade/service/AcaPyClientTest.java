@@ -52,6 +52,9 @@ class AcaPyClientTest extends AriesFacadeIntBase {
 		String baseUrl = String.format(acaPyProperties.getBasePath() + ":%s", mockBackEnd.getPort());
 		AcaPyProperties acapyProperties = new AcaPyProperties();
 		acapyProperties.setBasePath(baseUrl);
+		acapyProperties.setCredentialOfferAutoIssue(acaPyProperties.getCredentialOfferAutoIssue());
+		acapyProperties.setCredentialOfferTrace(acaPyProperties.getCredentialOfferTrace());
+		acapyProperties.setCredentialOfferAutoRemove(acaPyProperties.getCredentialOfferAutoIssue());
 		acapyClient = new AcaPyClient(acapyProperties);
 	}
 
@@ -148,7 +151,7 @@ class AcaPyClientTest extends AriesFacadeIntBase {
 						"\",\"proof_request",
 						"\":{\"name\":\"present proof request\",\"non_revoked\":{\"from\":",
 						"\"to\":",
-						"},\"nonce\":\"123456789\",",
+						"},\"nonce\":\"78789\",",
 						"\"requested_attributes\":{\"generateProofRequest_attribute2\":{\"name"
 						, "\":\"generateProofRequest_attribute2\","
 						, "\"non_revoked\":{\"from\":",
@@ -198,7 +201,7 @@ class AcaPyClientTest extends AriesFacadeIntBase {
 		RecordedRequest request = mockBackEnd.takeRequest();
 
 		assertThat(request.getBody().readUtf8()).isEqualTo(
-				"{\"auto_issue\":false,\"auto_remove\":true,\"comment\":\"sendCredentialOffer_comment\","
+				"{\"auto_issue\":false,\"auto_remove\":false,\"comment\":\"sendCredentialOffer_comment\","
 						+ "\"connection_id\":\"" + connectionId + "\","
 						+ "\"cred_def_id\":\"sendCredentialOffer_credfDefId\","
 						+ "\"credential_preview\":{\"@type\":\"https://didcomm"
@@ -237,7 +240,7 @@ class AcaPyClientTest extends AriesFacadeIntBase {
 		RecordedRequest request = mockBackEnd.takeRequest();
 
 		assertThat(request.getBody().readUtf8()).isEqualTo(
-				"{\"auto_issue\":false,\"auto_remove\":true,\"comment\":\"datauri_comment\","
+				"{\"auto_issue\":false,\"auto_remove\":false,\"comment\":\"datauri_comment\","
 						+ "\"connection_id\":\"" + connectionId + "\","
 						+ "\"cred_def_id\":\"datauri_credfDefId\","
 						+ "\"credential_preview\":{\"@type\":\"https://didcomm"
