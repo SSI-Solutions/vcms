@@ -18,4 +18,10 @@ public class AcaPyProperties {
 	private String proofName = "present proof request";
 
 	private String nonce = "123456789";
+
+	private Boolean credentialOfferAutoRemove;
+
+	private Boolean credentialOfferAutoIssue;
+
+	private Boolean credentialOfferTrace;
 }

@@ -59,6 +59,8 @@ public class AcaPyClient {
 
 	private final MappingJackson2HttpMessageConverter springMvcJacksonConverter;
 
+	private final AcaPyProperties acapyProperties;
+
 	@Autowired
 	public AcaPyClient(AcaPyProperties acapyProperties) {
 		springMvcJacksonConverter = createMappingJacksonHttpMessageConverter();
@@ -75,6 +77,7 @@ public class AcaPyClient {
 		issueCredentialV10Api = new IssueCredentialV10Api(apiClient);
 		revocationApi = new RevocationApi(apiClient);
 		schemaApi = new SchemaApi(apiClient);
+		this.acapyProperties = acapyProperties;
 	}
 
 	protected ObjectMapper createObjectMapper() {
@@ -151,11 +154,11 @@ public class AcaPyClient {
 		credentialPreview.atType("https://didcomm.org/issue-credential/2.0/credential-preview");
 
 		V10CredentialFreeOfferRequest offer = new V10CredentialFreeOfferRequest();
-		offer.setAutoIssue(Boolean.FALSE);
-		offer.setAutoRemove(Boolean.TRUE);
+		offer.setAutoIssue(acapyProperties.getCredentialOfferAutoIssue());
+		offer.setAutoRemove(acapyProperties.getCredentialOfferAutoRemove());
 		offer.setCredDefId(creDefId);
 		offer.setConnectionId(connectionId);
-		offer.setTrace(Boolean.TRUE);
+		offer.setTrace(acapyProperties.getCredentialOfferTrace());
 		offer.setComment(comment);
 		offer.setCredentialPreview(credentialPreview);
 
