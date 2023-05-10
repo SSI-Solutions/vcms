@@ -6,4 +6,9 @@ logging.level:
   org.apache.http.impl.conn.DefaultHttpClientConnectionOperator: DEBUG
   org.apache.http.headers: DEBUG
 
-acapy.basePath: http://localhost
+acapy:
+  basePath: http://localhost
+  nonce: 78789
+  credentialOfferAutoRemove: false
+  credentialOfferAutoIssue: false
+  credentialOfferTrace: true

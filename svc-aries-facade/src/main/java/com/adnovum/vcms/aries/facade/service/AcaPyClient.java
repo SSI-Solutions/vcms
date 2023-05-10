@@ -37,6 +37,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Slf4j
 @Component
@@ -57,6 +59,8 @@ public class AcaPyClient {
 
 	private final MappingJackson2HttpMessageConverter springMvcJacksonConverter;
 
+	private final AcaPyProperties acapyProperties;
+
 	@Autowired
 	public AcaPyClient(AcaPyProperties acapyProperties) {
 		springMvcJacksonConverter = createMappingJacksonHttpMessageConverter();
@@ -73,6 +77,7 @@ public class AcaPyClient {
 		issueCredentialV10Api = new IssueCredentialV10Api(apiClient);
 		revocationApi = new RevocationApi(apiClient);
 		schemaApi = new SchemaApi(apiClient);
+		this.acapyProperties = acapyProperties;
 	}
 
 	protected ObjectMapper createObjectMapper() {
@@ -116,10 +121,30 @@ public class AcaPyClient {
 	protected V10CredentialExchange sendCredentialOffer(String creDefId, UUID connectionId, String comment, Map<String, String> claimMap) {
 
 		List<CredAttrSpec> attributes = new LinkedList<>();
-		for (Map.Entry<String, String> entry: claimMap.entrySet()) {
+		Pattern pattern = Pattern.compile("^data:(.*?)(;base64)?,(.*)$");
+
+
+		for (Map.Entry<String, String> entry : claimMap.entrySet()) {
 			CredAttrSpec attribute = new CredAttrSpec();
-			attribute.setValue(entry.getValue() == null ? "" : entry.getValue());
-			attribute.setMimeType("text/plain");
+			String rawClaimValue = entry.getValue() == null ? "" : entry.getValue();
+			String mimeType;
+			Matcher matcher = pattern.matcher(rawClaimValue);
+
+			if (!matcher.matches()) {
+				mimeType = "text/plain";
+
+			} else {
+				mimeType = matcher.group(1);
+				mimeType = mimeType.isEmpty() ? "text/plain" : mimeType;
+			}
+
+			// We always send the raw claim value received from the GUI
+			// For usual clear text fields no change or parsing is necessary
+			// For complext structures like images sending the full dataUri works well as experienced in Lissi.
+			// Wallets are not unified in their implementation. We expect sending the full dataUri and setting
+			// the correct mime type results in a wide range of compatibility.
+			attribute.setValue(rawClaimValue);
+			attribute.setMimeType(mimeType);
 			attribute.setName(entry.getKey());
 			attributes.add(attribute);
 		}
@@ -129,11 +154,11 @@ public class AcaPyClient {
 		credentialPreview.atType("https://didcomm.org/issue-credential/2.0/credential-preview");
 
 		V10CredentialFreeOfferRequest offer = new V10CredentialFreeOfferRequest();
-		offer.setAutoIssue(Boolean.FALSE);
-		offer.setAutoRemove(Boolean.FALSE);
+		offer.setAutoIssue(acapyProperties.getCredentialOfferAutoIssue());
+		offer.setAutoRemove(acapyProperties.getCredentialOfferAutoRemove());
 		offer.setCredDefId(creDefId);
 		offer.setConnectionId(connectionId);
-		offer.setTrace(Boolean.TRUE);
+		offer.setTrace(acapyProperties.getCredentialOfferTrace());
 		offer.setComment(comment);
 		offer.setCredentialPreview(credentialPreview);
 
@@ -154,6 +179,6 @@ public class AcaPyClient {
 	}
 
 	public Object getRevocationStatus(String credExId) {
-		return revocationApi.revocationCredentialRecordGet(credExId,null,null);
+		return revocationApi.revocationCredentialRecordGet(credExId, null, null);
 	}
 }

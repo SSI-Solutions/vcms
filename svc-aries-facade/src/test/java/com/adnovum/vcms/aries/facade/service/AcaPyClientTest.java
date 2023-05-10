@@ -18,6 +18,8 @@ import okhttp3.mockwebserver.RecordedRequest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
@@ -50,6 +52,9 @@ class AcaPyClientTest extends AriesFacadeIntBase {
 		String baseUrl = String.format(acaPyProperties.getBasePath() + ":%s", mockBackEnd.getPort());
 		AcaPyProperties acapyProperties = new AcaPyProperties();
 		acapyProperties.setBasePath(baseUrl);
+		acapyProperties.setCredentialOfferAutoIssue(acaPyProperties.getCredentialOfferAutoIssue());
+		acapyProperties.setCredentialOfferTrace(acaPyProperties.getCredentialOfferTrace());
+		acapyProperties.setCredentialOfferAutoRemove(acaPyProperties.getCredentialOfferAutoIssue());
 		acapyClient = new AcaPyClient(acapyProperties);
 	}
 
@@ -146,7 +151,7 @@ class AcaPyClientTest extends AriesFacadeIntBase {
 						"\",\"proof_request",
 						"\":{\"name\":\"present proof request\",\"non_revoked\":{\"from\":",
 						"\"to\":",
-						"},\"nonce\":\"123456789\",",
+						"},\"nonce\":\"78789\",",
 						"\"requested_attributes\":{\"generateProofRequest_attribute2\":{\"name"
 						, "\":\"generateProofRequest_attribute2\","
 						, "\"non_revoked\":{\"from\":",
@@ -177,7 +182,7 @@ class AcaPyClientTest extends AriesFacadeIntBase {
 	}
 
 	@Test
-	void sendCredentialOffer() throws JsonProcessingException, InterruptedException {
+	void sendCredentialOfferCreatesValidRequestWithMultipleTextClaims() throws JsonProcessingException, InterruptedException {
 		String test = "sendCredentialOffer";
 		UUID connectionId = UUID.randomUUID();
 		V10CredentialExchange mockresponse = new V10CredentialExchange();
@@ -206,6 +211,41 @@ class AcaPyClientTest extends AriesFacadeIntBase {
 						+ "\"name\":\"sendCredentialOffer_claim2\",\"value\":\"sendCredentialOffer_value2\"},"
 						+ "{\"mime-type\":\"text/plain\","
 						+ "\"name\":\"sendCredentialOffer_claim1\",\"value\":\"sendCredentialOffer_value1\"}]},"
+						+ "\"trace\":true}");
+		assertThat(request.getRequestLine()).isEqualTo("POST /issue-credential/send-offer HTTP/1.1");
+	}
+
+	@ParameterizedTest
+	@CsvSource(value = {
+			"simple text Claim.text/plain.simple text Claim",
+			"data:,implicitTextClaim.text/plain.data:,implicitTextClaim",
+			"data:text/plain;base64,fullDataUriIssued.text/plain.data:text/plain;base64,fullDataUriIssued",
+			"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/4QBMRXhpZg.image/jpeg.data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/4QBMRXhpZg",
+	        "data:image/png;base64,aW1hZ2VEYXRhSlBHAAAA.image/png.data:image/png;base64,aW1hZ2VEYXRhSlBHAAAA"}, delimiter = '.')
+	void sendCredentialOfferWhereSomeClaimsAreDataURIs(String dataFromFrontend, String expectedMimeType, String expectedClaimValue) throws JsonProcessingException, InterruptedException {
+		String test = "datauri";
+		UUID connectionId = UUID.randomUUID();
+		V10CredentialExchange mockresponse = new V10CredentialExchange();
+		mockBackEnd.enqueue(new MockResponse()
+				.setBody(objectMapper.writeValueAsString(mockresponse))
+				.addHeader("Content-Type", "application/json"));
+
+		Map<String, String> claimMap = new HashMap<>();
+		claimMap.put("testClaimKey", dataFromFrontend);
+
+
+		assertThat(acapyClient.sendCredentialOffer(test + "_credfDefId", connectionId, test + "_comment",
+				claimMap)).isEqualTo(mockresponse);
+
+		RecordedRequest request = mockBackEnd.takeRequest();
+
+		assertThat(request.getBody().readUtf8()).isEqualTo(
+				"{\"auto_issue\":false,\"auto_remove\":false,\"comment\":\"datauri_comment\","
+						+ "\"connection_id\":\"" + connectionId + "\","
+						+ "\"cred_def_id\":\"datauri_credfDefId\","
+						+ "\"credential_preview\":{\"@type\":\"https://didcomm"
+						+ ".org/issue-credential/2.0/credential-preview\",\"attributes\":[{\"mime-type\":\""+expectedMimeType+"\","
+						+ "\"name\":\"testClaimKey\",\"value\":\""+expectedClaimValue+"\"}]},"
 						+ "\"trace\":true}");
 		assertThat(request.getRequestLine()).isEqualTo("POST /issue-credential/send-offer HTTP/1.1");
 	}

@@ -10,5 +10,8 @@ acapy:
   comment: "present proof request"
   proofName: "present proof request"
   nonce: "123456789"
+  credentialOfferAutoRemove: false
+  credentialOfferAutoIssue: false
+  credentialOfferTrace: true
 
 management.server.port: 9000
