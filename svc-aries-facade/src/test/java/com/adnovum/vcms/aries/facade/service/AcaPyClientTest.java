@@ -198,7 +198,7 @@ class AcaPyClientTest extends AriesFacadeIntBase {
 		RecordedRequest request = mockBackEnd.takeRequest();
 
 		assertThat(request.getBody().readUtf8()).isEqualTo(
-				"{\"auto_issue\":false,\"auto_remove\":false,\"comment\":\"sendCredentialOffer_comment\","
+				"{\"auto_issue\":false,\"auto_remove\":true,\"comment\":\"sendCredentialOffer_comment\","
 						+ "\"connection_id\":\"" + connectionId + "\","
 						+ "\"cred_def_id\":\"sendCredentialOffer_credfDefId\","
 						+ "\"credential_preview\":{\"@type\":\"https://didcomm"
@@ -215,10 +215,10 @@ class AcaPyClientTest extends AriesFacadeIntBase {
 	@ParameterizedTest
 	@CsvSource(value = {
 			"simple text Claim.text/plain.simple text Claim",
-			"data:,implicitTextClaim.text/plain.implicitTextClaim",
-			"data:text/plain;base64,EncodedDataWillBePersisted.text/plain.EncodedDataWillBePersisted",
-			"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/4QBMRXhpZg.image/jpeg./9j/4AAQSkZJRgABAQEAYABgAAD/4QBMRXhpZg",
-	        "data:image/png;base64,aW1hZ2VEYXRhSlBHAAAA.image/png.aW1hZ2VEYXRhSlBHAAAA"}, delimiter = '.')
+			"data:,implicitTextClaim.text/plain.data:,implicitTextClaim",
+			"data:text/plain;base64,fullDataUriIssued.text/plain.data:text/plain;base64,fullDataUriIssued",
+			"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/4QBMRXhpZg.image/jpeg.data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/4QBMRXhpZg",
+	        "data:image/png;base64,aW1hZ2VEYXRhSlBHAAAA.image/png.data:image/png;base64,aW1hZ2VEYXRhSlBHAAAA"}, delimiter = '.')
 	void sendCredentialOfferWhereSomeClaimsAreDataURIs(String dataFromFrontend, String expectedMimeType, String expectedClaimValue) throws JsonProcessingException, InterruptedException {
 		String test = "datauri";
 		UUID connectionId = UUID.randomUUID();
@@ -237,7 +237,7 @@ class AcaPyClientTest extends AriesFacadeIntBase {
 		RecordedRequest request = mockBackEnd.takeRequest();
 
 		assertThat(request.getBody().readUtf8()).isEqualTo(
-				"{\"auto_issue\":false,\"auto_remove\":false,\"comment\":\"datauri_comment\","
+				"{\"auto_issue\":false,\"auto_remove\":true,\"comment\":\"datauri_comment\","
 						+ "\"connection_id\":\"" + connectionId + "\","
 						+ "\"cred_def_id\":\"datauri_credfDefId\","
 						+ "\"credential_preview\":{\"@type\":\"https://didcomm"

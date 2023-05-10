@@ -118,24 +118,29 @@ public class AcaPyClient {
 	protected V10CredentialExchange sendCredentialOffer(String creDefId, UUID connectionId, String comment, Map<String, String> claimMap) {
 
 		List<CredAttrSpec> attributes = new LinkedList<>();
+		Pattern pattern = Pattern.compile("^data:(.*?)(;base64)?,(.*)$");
+
+
 		for (Map.Entry<String, String> entry : claimMap.entrySet()) {
 			CredAttrSpec attribute = new CredAttrSpec();
 			String rawClaimValue = entry.getValue() == null ? "" : entry.getValue();
-			String claimValueToPersist;
 			String mimeType;
-			Pattern pattern = Pattern.compile("^data:(.*?)(;base64)?,(.*)$");
 			Matcher matcher = pattern.matcher(rawClaimValue);
 
 			if (!matcher.matches()) {
-				claimValueToPersist = rawClaimValue;
 				mimeType = "text/plain";
 
 			} else {
 				mimeType = matcher.group(1);
 				mimeType = mimeType.isEmpty() ? "text/plain" : mimeType;
-				claimValueToPersist = matcher.group(3);
 			}
-			attribute.setValue(claimValueToPersist);
+
+			// We always send the raw claim value received from the GUI
+			// For usual clear text fields no change or parsing is necessary
+			// For complext structures like images sending the full dataUri works well as experienced in Lissi.
+			// Wallets are not unified in their implementation. We expect sending the full dataUri and setting
+			// the correct mime type results in a wide range of compatibility.
+			attribute.setValue(rawClaimValue);
 			attribute.setMimeType(mimeType);
 			attribute.setName(entry.getKey());
 			attributes.add(attribute);
@@ -147,7 +152,7 @@ public class AcaPyClient {
 
 		V10CredentialFreeOfferRequest offer = new V10CredentialFreeOfferRequest();
 		offer.setAutoIssue(Boolean.FALSE);
-		offer.setAutoRemove(Boolean.FALSE);
+		offer.setAutoRemove(Boolean.TRUE);
 		offer.setCredDefId(creDefId);
 		offer.setConnectionId(connectionId);
 		offer.setTrace(Boolean.TRUE);
