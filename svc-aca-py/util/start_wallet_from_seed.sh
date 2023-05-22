@@ -75,12 +75,7 @@ echo "TAILS_SERVER_URL:       		    ${TAILS_SERVER_URL}"
 echo -----------------------
 
 aca-py start \
---debug-connections \
---debug-credentials \
---debug-presentations \
---auto-store-credential \
 --auto-verify-presentation \
---monitor-ping \
 --admin "${ADMIN_IP}" "${ADMIN_PORT}" \
 --endpoint "${DID_ENDPOINT_URL}" \
 --inbound-transport http "${ENDPOINT_IP}" "${ENDPOINT_PORT}" \
@@ -89,7 +84,6 @@ aca-py start \
 --webhook-url "${WEBHOOK_URL}" \
 --genesis-url "${LEDGER_URL}" \
 --label "${LABEL}" \
---public-invites \
 --wallet-type indy \
 --wallet-name "${WALLET_NAME}" \
 --wallet-key "${WALLET_KEY}" \
