@@ -6,7 +6,7 @@ pluginManagement {
 		}
 	}
 }
-def registry_repo = "ssidockerregistry.azurecr.io"
+def registry_repo = "ghcr.io"
 def registry_repo_owner = 'SSI-Solutions'
 def registry_repo_name = "${registry_repo}/${registry_repo_owner.toLowerCase()}".toString()
 def registry_username = System.getenv('REGISTRY_USERNAME')
