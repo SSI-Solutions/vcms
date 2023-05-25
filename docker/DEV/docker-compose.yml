@@ -56,7 +56,7 @@ services:
     depends_on:
       - tails-file-server
     volumes:
-      - ./wallet/:/home/indy/.indy_client
+      - ./wallet/:/home/indy/.aries_cloudagent
 
   webhook:
     container_name: vcms-svc-webhook
