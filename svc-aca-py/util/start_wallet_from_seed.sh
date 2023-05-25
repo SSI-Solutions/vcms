@@ -16,7 +16,7 @@
 ADMIN_URL="http://${ADMIN_IP}:${ADMIN_PORT}"
 ENDPOINT_URL="http://${ENDPOINT_IP}:${ENDPOINT_PORT}"
 WEBHOOK_URL="http://${WEBHOOK_IP}:${WEBHOOK_PORT}"
-WALLET_PATH="/home/indy/.indy_client/wallet/${WALLET_NAME}"
+WALLET_PATH="/home/indy/.aries_cloudagent/wallet/${WALLET_NAME}"
 
 if [[ ${ACAPY_ENDORSER_ROLE} = 'author' ]]
 then
@@ -47,7 +47,7 @@ then
     aca-py provision \
       --seed "${SEED}" \
       --endpoint "${DID_ENDPOINT_URL}" \
-      --wallet-type indy \
+      --wallet-type askar \
       --no-ledger \
       --wallet-name "${WALLET_NAME}" \
       --wallet-key "${WALLET_KEY}"
@@ -84,7 +84,7 @@ aca-py start \
 --webhook-url "${WEBHOOK_URL}" \
 --genesis-url "${LEDGER_URL}" \
 --label "${LABEL}" \
---wallet-type indy \
+--wallet-type askar \
 --wallet-name "${WALLET_NAME}" \
 --wallet-key "${WALLET_KEY}" \
 --tails-server-base-url "${TAILS_SERVER_URL}"
