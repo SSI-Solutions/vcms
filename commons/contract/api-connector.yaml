@@ -9,11 +9,11 @@ servers:
 paths:
   /connection/invitation:
     post:
-      summary: API to request a new invitation to a DIDComm connection
+      summary: Request a new invitation to a DIDComm connection
       operationId: connectionInvitation
       responses:
         '200':
-          description: get new invitation to a DIDComm connection
+          description: A DIDComm connection is opened and a new wallet invitation is created
           content:
             application/json:
               schema:
@@ -34,11 +34,11 @@ paths:
     parameters:
       - $ref: '#/components/parameters/connectionId'
     get:
-      summary: API to request the state of a connection
+      summary: Request the state of a connection
       operationId: connectionState
       responses:
         '200':
-          description: get DIDComm connection state
+          description: The DIDComm connection state is received
           content:
             application/json:
               schema:
@@ -61,7 +61,7 @@ components:
       in: path
       name: connectionId
       required: true
-      description: id of the DIDComm connection between the user and the service
+      description: ID of the DIDComm connection between the user and the service
       schema:
         type: string
         format: uuid
@@ -125,6 +125,7 @@ components:
         invitationUrl:
           type: string
           description: Invitation to convert to a QR Code to be usable by the SSI wallet.
+          example: https://acapy.public.endpoint/?c_i=FO45ydfhDSFSgfh
         connectionId:
           type: string
           format: uuid

@@ -1,0 +1,18 @@
+components:
+  schemas:
+    CredentialDefinitionId:
+      type: string
+      example: Xd6TV52RudCxrFBSJzDn67:3:CL:305:social-id
+    claims:
+      type: array
+      items:
+        type: string
+      example: [ "name", "email", "phone" ]
+    claimMap:
+      type: object
+      additionalProperties:
+        type: string
+      example:
+        name: "John Doe"
+        email: "john.doe@email.com"
+        phone: "+12345678912"
