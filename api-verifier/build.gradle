@@ -18,13 +18,12 @@ dependencies {
 	implementation libs.modelmapper
 	implementation libs.flyway
 	implementation libs.commons.lang3
-	implementation libs.swagger.ui
+	implementation libs.springfox.starter
 
 	annotationProcessor libs.lombok
 
 	compileOnly libs.openapi.jackson.nullable
 	compileOnly libs.spotbugs
-	compileOnly libs.springfox
 	compileOnly libs.swagger.annotations
 
 	runtimeOnly libs.postgres
