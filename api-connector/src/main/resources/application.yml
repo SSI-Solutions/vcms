@@ -1,11 +1,8 @@
 server:
   port: ${SERVER_PORT:8080}
 
-springdoc:
-  api-docs:
-    enabled: ${ENABLE_API_DOCS:false}
-  swagger-ui:
-    disable-swagger-default-url: true
+# Based on bug https://stackoverflow.com/questions/72235752/cannot-invoke-org-springframework-web-servlet-mvc-condition-patternsrequestcond
+spring.mvc.pathmatch.matching-strategy: ant_path_matcher
 
 aries.facade.basePath: ${ARIES_FACADE_BASEPATH:http://localhost:8000}
 
