@@ -5,10 +5,10 @@ import com.adnovum.vcms.genapi.issuer.server.controller.AdminApi;
 import com.adnovum.vcms.genapi.issuer.server.dto.CredentialResponse;
 import com.adnovum.vcms.genapi.issuer.server.dto.HolderResponse;
 import com.adnovum.vcms.issuer.datamodel.entity.IssuingProcess;
-import com.adnovum.vcms.issuer.datamodel.enumeration.RevocationState;
 import com.adnovum.vcms.issuer.service.AriesFacadeService;
 import com.adnovum.vcms.issuer.service.HolderService;
 import com.adnovum.vcms.issuer.service.IssuingProcessService;
+import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -21,6 +21,7 @@ import java.util.UUID;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
+@Api(tags = "Admin utilities", description = "Manage holders and revoke credentials")
 public class AdminController implements AdminApi {
 
 	private final HolderService holderService;

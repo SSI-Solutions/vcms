@@ -13,6 +13,7 @@ import com.adnovum.vcms.issuer.service.AriesFacadeService;
 import com.adnovum.vcms.issuer.service.ClaimService;
 import com.adnovum.vcms.issuer.service.HolderService;
 import com.adnovum.vcms.issuer.service.IssuingProcessService;
+import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +29,7 @@ import static com.adnovum.vcms.genapi.aries.facade.client.dto.AriesConnectionSta
 @Slf4j
 @RestController
 @RequiredArgsConstructor
+@Api(tags = "Issuer", description = "Issue Verifiable Credentials")
 public class IssuerController implements IssueApi {
 
 	private final IssuingProcessService issuingProcessService;
