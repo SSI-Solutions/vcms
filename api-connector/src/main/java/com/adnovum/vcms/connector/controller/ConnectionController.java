@@ -6,6 +6,7 @@ import com.adnovum.vcms.connector.service.ConnectionService;
 import com.adnovum.vcms.genapi.connector.server.controller.ConnectionApi;
 import com.adnovum.vcms.genapi.connector.server.dto.ConnStatus;
 import com.adnovum.vcms.genapi.connector.server.dto.Invitation;
+import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,7 @@ import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
+@Api(tags = "Connector", description = "Initiate and review connections")
 public class ConnectionController implements ConnectionApi {
 
 	private final AriesFacadeService ariesFacadeService;

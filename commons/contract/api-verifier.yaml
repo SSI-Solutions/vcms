@@ -14,11 +14,11 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/VerificationRequest'
-      summary: API to verify and receive user data
+      summary: Create a new verification process, initiating the reveal of claims in a VC
       operationId: verifyCredentials
       responses:
         '200':
-          description: verify and get user data
+          description: A new verification process is created.
           content:
             application/json:
               schema:
@@ -87,11 +87,11 @@ paths:
     parameters:
       - $ref: '#/components/parameters/processId'
     get:
-      summary: API to request the state of the verification
+      summary: Request the current state of the verification process
       operationId: getVerificationState
       responses:
         '200':
-          description: get verification state
+          description: The current state of the verification process is returned
           content:
             application/json:
               schema:
@@ -112,11 +112,11 @@ paths:
     parameters:
       - $ref: '#/components/parameters/processId'
     get:
-      summary: API to request the claims obtained during a verification referenced by its connection id
+      summary: Request the claims of a process in VERIFIED state
       operationId: getVerifiedClaims
       responses:
         '200':
-          description: get verification claims
+          description: The claims are a successfully revealed
           content:
             application/json:
               schema:
@@ -139,7 +139,7 @@ components:
       in: path
       name: processId
       required: true
-      description: id of a verification process
+      description: ID of a verification process
       schema:
         $ref: '#/components/schemas/Uuid'
   responses:
@@ -199,7 +199,7 @@ components:
       description: Response for a specific error when an operation can not be completed successfully.
         successfully.
     VerifiedUserData:
-      description: verified user data
+      description: Verified user data
       type: object
     VerificationResponse:
       type: object
@@ -210,8 +210,11 @@ components:
           $ref: '#/components/schemas/VerStatus'
         processId:
           $ref: '#/components/schemas/Uuid'
+      example:
+        - status: "IN_PROGRESS"
+          processId: "a7d34d5d-sf23-48f7-875f-e739482fd1d6"
     VerStatus:
-      description: state of the verification
+      description: State of the verification process
       type: string
       enum:
         - NO_CONNECTION
@@ -219,17 +222,16 @@ components:
         - VERIFIED
         - REVOKED
         - ABANDONED
+      example: VERIFIED
     VerifiedClaims:
-      type: object
-      additionalProperties:
-        type: string
+      $ref: 'vcms-common.yaml#/components/schemas/claimMap'
     VerificationRequest:
       type: object
       required:
         - connectionId
       properties:
         credentialDefinitionId:
-          type: string
+          $ref: 'vcms-common.yaml#/components/schemas/CredentialDefinitionId'
         attributes:
           type: array
           items:
@@ -241,8 +243,6 @@ components:
       type: object
       properties:
         credentialDefinitionId:
-          type: string
+          $ref: 'vcms-common.yaml#/components/schemas/CredentialDefinitionId'
         claims:
-          type: array
-          items:
-            type: string
+          $ref: 'vcms-common.yaml#/components/schemas/claims'

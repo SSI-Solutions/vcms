@@ -21,7 +21,7 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/IssuingRequest'
-      summary: API to issue a Verifiable Credential
+      summary: Issue a new credential on an existing connection
       operationId: issueCredential
       responses:
         '200':
@@ -214,7 +214,7 @@ components:
       in: path
       name: credentialId
       required: true
-      description: Issued VC id
+      description: ID of the already issued Verifiable Credential
       schema:
         $ref: '#/components/schemas/Uuid'
     holderId:
@@ -326,21 +326,16 @@ components:
           type: string
           format: uuid
         credentialDefinitionId:
-          type: string
+          $ref: 'vcms-common.yaml#/components/schemas/CredentialDefinitionId'
         attributes:
-          $ref: '#/components/schemas/AttributeMap'
+          $ref: 'vcms-common.yaml#/components/schemas/claimMap'
         userId:
           type: string
-    AttributeMap:
-      type: object
-      additionalProperties:
-        type: string
+          example: "OptionalHolderID"
     CredentialDefinition:
       type: object
       properties:
         credentialDefinitionId:
-          type: string
+          $ref: 'vcms-common.yaml#/components/schemas/CredentialDefinitionId'
         claims:
-          type: array
-          items:
-            type: string
+          $ref: 'vcms-common.yaml#/components/schemas/claims'

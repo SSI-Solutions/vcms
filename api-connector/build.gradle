@@ -12,7 +12,7 @@ dependencies {
 	implementation libs.spring.boot.web
 	implementation libs.modelmapper
 	implementation libs.spring.security
-	implementation libs.swagger.ui
+	implementation libs.springfox.starter
 	implementation libs.flyway
 	implementation libs.spring.boot.jpa
 	implementation libs.spring.boot.amqp
@@ -23,7 +23,6 @@ dependencies {
 
 	compileOnly libs.openapi.jackson.nullable
 	compileOnly libs.spotbugs
-	compileOnly libs.springfox
 	compileOnly libs.swagger.annotations
 
 	testImplementation libs.spring.boot.test

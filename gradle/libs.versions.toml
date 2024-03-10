@@ -47,6 +47,7 @@ spring-boot-web = { module="org.springframework.boot:spring-boot-starter-web", v
 spring-security = { module="org.springframework.boot:spring-boot-starter-security", version.ref="spring-boot" }
 spring-security-test = { module="org.springframework.security:spring-security-test", version.ref="spring-security" }
 springfox = { module="io.springfox:springfox-core", version.ref="springfox" }
+springfox-starter = { module="io.springfox:springfox-boot-starter", version.ref="springfox" }
 swagger-annotations = { module="io.swagger:swagger-annotations", version.ref="swagger-annotations" }
 swagger-annotations-openapi = { module="io.swagger.core.v3:swagger-annotations", version.ref="swagger-annotations-openapi" }
 modelmapper = {module="org.modelmapper:modelmapper", version.ref="modelmapper"}

@@ -18,14 +18,13 @@ dependencies {
 	implementation libs.spring.security
 	implementation libs.modelmapper
 	implementation libs.commons.lang3
-	implementation libs.swagger.ui
+	implementation libs.springfox.starter
 
 	annotationProcessor libs.lombok
 	annotationProcessor libs.spring.boot.config.processer
 
 	compileOnly libs.openapi.jackson.nullable
 	compileOnly libs.spotbugs
-	compileOnly libs.springfox
 	compileOnly libs.swagger.annotations
 
 	runtimeOnly libs.postgres

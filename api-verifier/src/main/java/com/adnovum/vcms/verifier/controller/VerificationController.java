@@ -11,6 +11,7 @@ import com.adnovum.vcms.verifier.datamodel.entity.VerifiedClaim;
 import com.adnovum.vcms.verifier.service.AriesFacadeService;
 import com.adnovum.vcms.verifier.service.VerificationProcessService;
 import com.adnovum.vcms.verifier.service.VerifiedClaimService;
+import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +28,7 @@ import static com.adnovum.vcms.genapi.aries.facade.client.dto.AriesConnectionSta
 @Slf4j
 @RestController
 @RequiredArgsConstructor
+@Api(tags = "Verifier", description = "Manage verification processes to reveal claims of a VC")
 public class VerificationController implements VerifyApi {
 
 	private final VerificationProcessService verificationProcessService;
