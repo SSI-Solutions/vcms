@@ -17,7 +17,7 @@ public class SwaggerConfig {
 				.apis(RequestHandlerSelectors.basePackage("com.adnovum.vcms.connector.controller")).paths(PathSelectors.any())
 				.build().apiInfo(
 						new ApiInfoBuilder().title("VCMS Connector API").description("Create and track DIDComm " + "connections")
-								.version("1.2.1").build());
+								.version("1.2.2").build());
 	}
 
 }
