@@ -1,6 +1,8 @@
 server:
   port: ${SERVER_PORT:8081}
-
+  swagger:
+      url: "http://localhost:8081"
+      description: "local verifier deployment"
 logging:
   level:
     root: ${LOG_LEVEL:INFO}

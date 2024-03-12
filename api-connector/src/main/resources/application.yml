@@ -1,5 +1,8 @@
 server:
   port: ${SERVER_PORT:8080}
+  swagger:
+      url: "http://localhost:8080"
+      description: "local connector deployment"
 
 # Based on bug https://stackoverflow.com/questions/72235752/cannot-invoke-org-springframework-web-servlet-mvc-condition-patternsrequestcond
 spring.mvc.pathmatch.matching-strategy: ant_path_matcher

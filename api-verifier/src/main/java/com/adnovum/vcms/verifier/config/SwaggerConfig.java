@@ -16,10 +16,10 @@ public class SwaggerConfig {
 	public Docket api() {
 		return new Docket(DocumentationType.OAS_30).select()
 				.apis(RequestHandlerSelectors.basePackage("com.adnovum.vcms.verifier.controller")).paths(PathSelectors.any())
-				.build().apiInfo(new ApiInfoBuilder().title("VCMS Verifier API")
-						.description("API to request verification " + "and user data.").version("1.2.2").build());
+				.build()
+				.apiInfo(new ApiInfoBuilder().title("VCMS Verifier API").description("API to request verification and user "
+								+ "data.")
+						.version("1.2.3").build());
 	}
 
 }
-
-

@@ -15,10 +15,10 @@ public class SwaggerConfig {
 	public Docket api() {
 		return new Docket(DocumentationType.OAS_30).select()
 				.apis(RequestHandlerSelectors.basePackage("com.adnovum.vcms.issuer.controller")).paths(PathSelectors.any())
-				.build().apiInfo(new ApiInfoBuilder().title("VCMS Issuer and Admin API")
-						.description("Issue Verifiable " + "Credentails and manage credential holders").version("1.2.2").build());
+				.build()
+				.apiInfo(new ApiInfoBuilder().title("VCMS Issuer and Admin API")
+						.description("Issue Verifiable Credentails and manage credential holders").version("1.2.3")
+						.build());
 	}
 
 }
-
-

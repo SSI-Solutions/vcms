@@ -1,6 +1,8 @@
 server:
   port: ${SERVER_PORT:8100}
-
+  swagger:
+      url: "http://localhost:8100"
+      description: "local issuer deployment"
 logging:
   level:
     root: ${LOG_LEVEL:INFO}
