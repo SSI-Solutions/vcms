@@ -56,4 +56,4 @@ jobs:
         # Dependabot PRs do not have access to secrets, so this task would fail.
         # SonarQube results are not meaningful for Dependabot PRs, we can skip this step.
         if: env.SONAR_TOKEN != null
-        run: ./gradlew sonarqube
+        run: ./gradlew sonar
