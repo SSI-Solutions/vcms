@@ -48,7 +48,7 @@ jobs:
           path: build/reports/tests
 
       - name: SonarCloud Scan
-        run: ./gradlew sonarqube
+        run: ./gradlew sonar
 
       - name: Build docker images to registry
         run: ./gradlew buildAllImages
