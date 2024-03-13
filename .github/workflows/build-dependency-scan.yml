@@ -31,7 +31,7 @@ jobs:
       - name: OWASP dependency scanning of Gradle build dependencies
         run: ./gradlew dependencyCheckAggregate
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: dependency-reports

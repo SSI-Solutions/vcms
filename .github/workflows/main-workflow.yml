@@ -42,7 +42,7 @@ jobs:
 
       - name: Upload test reports
         if: always()
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v4
         with:
           name: test-reports
           path: build/reports/tests
@@ -61,7 +61,7 @@ jobs:
         run: echo "version=$(./gradlew -q currentVersion)" >> $GITHUB_OUTPUT
 
       - name: save OpenApi specifications for possible release
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: openapi-specs
           path: |
