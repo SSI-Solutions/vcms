@@ -70,7 +70,7 @@ jobs:
             commons/build/contract/api-verifier.yaml
 
       - name: Repository Dispatch
-        uses: peter-evans/repository-dispatch@v2
+        uses: peter-evans/repository-dispatch@v3
         with:
           token: ${{ secrets.DISPATCH_PAT }}
           repository: ${{ secrets.DISPATCH_REPOSITORY }}
