@@ -69,13 +69,14 @@ jobs:
             commons/build/contract/api-issuer.yaml
             commons/build/contract/api-verifier.yaml
 
-      - name: Repository Dispatch
-        uses: peter-evans/repository-dispatch@v2
-        with:
-          token: ${{ secrets.DISPATCH_PAT }}
-          repository: ${{ secrets.DISPATCH_REPOSITORY }}
-          event-type: "push-master"
-          client-payload: '{"version": "${{ steps.current_build.outputs.version }}"}'
+# Automatic dispatch turned off, see deployment repo for manual triggering of a new test deployments.
+#      - name: Repository Dispatch
+#        uses: peter-evans/repository-dispatch@v2
+#        with:
+#          token: ${{ secrets.DISPATCH_PAT }}
+#          repository: ${{ secrets.DISPATCH_REPOSITORY }}
+#          event-type: "push-master"
+#          client-payload: '{"version": "${{ steps.current_build.outputs.version }}"}'
 
   release:
     needs: build
